@@ -1,0 +1,3 @@
+- consumir una API externa
+- definir la interfaz de acuerdo a los datos y tipo de datos que devuelve la api
+- lee la configuración regional del teléfono (idioma + región configurados por el usuario en su sistema) con expo-localization
