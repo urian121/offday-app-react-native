@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { View } from "react-native";
 import { useHolidaysScreen } from "../hooks/useHolidaysScreen";
 import { useMonthInsight } from "../hooks/useMonthInsight";
@@ -7,7 +8,11 @@ import { HolidayFilters } from "./HolidayFilters";
 import { HolidayHeader } from "./HolidayHeader";
 import { HolidayList } from "./HolidayList";
 
-export function HolidaysScreen() {
+type HolidaysScreenProps = {
+  onReady?: () => void;
+};
+
+export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
   const {
     copy,
     month,
@@ -37,6 +42,12 @@ export function HolidaysScreen() {
     holidaysReady: !loading,
     holidaysError: error,
   });
+
+  useEffect(() => {
+    if (!loading) {
+      onReady?.();
+    }
+  }, [loading, onReady]);
 
   const yearOptions = availableYears.map((value) => ({
     value,
