@@ -15,6 +15,7 @@ export default function App() {
   return (
     <GestureHandlerRootView className="flex-1">
       <SafeAreaProvider>
+        <StatusBar style="dark" />
         <BottomSheetModalProvider>
           <AppContent />
         </BottomSheetModalProvider>
@@ -38,14 +39,16 @@ function AppContent() {
             className="size-full"
           />
         </View>
-        <SafeAreaView className="flex-1 w-full">
-          <StatusBar style="dark" hidden={true} />
+        <SafeAreaView className="flex-1 w-full" edges={["top", "left", "right"]}>
           <HolidaysScreen onReady={() => setContentReady(true)} />
         </SafeAreaView>
       </View>
 
       {showLoadingOverlay ? (
-        <Animated.View className="absolute inset-0" exiting={FadeOut.duration(280)}>
+        <Animated.View
+          className="absolute inset-0"
+          exiting={FadeOut.duration(280)}
+        >
           <AppLoadingScreen onLayout={onLoadingScreenLayout} />
         </Animated.View>
       ) : null}

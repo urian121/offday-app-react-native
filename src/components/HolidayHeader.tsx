@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { formatMonthName } from "../utils/dateFormat";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 
@@ -16,10 +16,18 @@ export function HolidayHeader({
   copy,
 }: HolidayHeaderProps) {
   return (
-    <View className="pt-10">
-      <Text className="text-[11px] font-medium uppercase tracking-[3px] text-brand-muted">
-        OffDay
-      </Text>
+    <View className="pt-2">
+      <View className="flex-row items-center gap-3 mb-14">
+        <Image
+          source={require("../../assets/icon.png")}
+          className="h-14 w-14 rounded-2xl"
+          resizeMode="contain"
+          accessibilityLabel="OffDay"
+        />
+        <Text className="text-xl font-medium tracking-wide text-brand-ink">
+          OffDay
+        </Text>
+      </View>
 
       <View className="mt-5 flex-row items-end gap-3">
         <Text className="capitalize text-[40px] leading-[42px] text-brand-ink">
