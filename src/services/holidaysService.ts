@@ -14,6 +14,31 @@ function filterByMonth(holidays: Holiday[], month: number): Holiday[] {
   });
 }
 
+async function fetchYearHolidays(
+  countryCode: string,
+  year: number
+): Promise<Holiday[]> {
+  const url = `${BASE_URL}/${countryCode.toUpperCase()}/${year}`;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Error al obtener festivos: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function getHolidaysForYear(
+  params: Partial<Pick<HolidayQueryParams, "countryCode" | "year">> = {}
+): Promise<Holiday[]> {
+  const { countryCode, year } = {
+    ...getDefaultHolidayQueryParams(),
+    ...params,
+  };
+
+  return fetchYearHolidays(countryCode, year);
+}
+
 export async function getHolidays(
   params: Partial<HolidayQueryParams> = {}
 ): Promise<Holiday[]> {
@@ -22,15 +47,7 @@ export async function getHolidays(
     ...params,
   };
 
-  const url = `${BASE_URL}/${countryCode.toUpperCase()}/${year}`;
-
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(`Error al obtener festivos: ${response.status}`);
-  }
-
-  const data: Holiday[] = await response.json();
+  const data = await fetchYearHolidays(countryCode, year);
   return filterByMonth(data, month);
 }
 

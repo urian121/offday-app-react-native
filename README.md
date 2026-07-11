@@ -2,10 +2,10 @@
 - definir la interfaz de acuerdo a los datos y tipo de datos que devuelve la api
 - lee la configuración regional del teléfono (idioma + región configurados por el usuario en su sistema) con expo-localization
 
-
+falta :
+-plash screen
 tipo de letra,
-select picker, date picker
-- ver todos los dias festivo del año
+
 
 
 npx expo start --clear

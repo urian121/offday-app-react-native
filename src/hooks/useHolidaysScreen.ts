@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import { Holiday } from "../interface/holiday";
-import { getAvailableYears, getHolidays } from "../services/holidaysService";
+import { getAvailableYears, getHolidaysForYear } from "../services/holidaysService";
 import { getDefaultHolidayQueryParams } from "../utils/getDefaultHolidayQueryParams";
 import { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 import { useLazyBottomSheet } from "./useLazyBottomSheet";
 
 const defaults = getDefaultHolidayQueryParams();
+
+function filterHolidaysByMonth(holidays: Holiday[], month: number): Holiday[] {
+  return holidays.filter((holiday) => {
+    const [, monthStr] = holiday.date.split("-");
+    return Number(monthStr) === month;
+  });
+}
 
 export function useHolidaysScreen() {
   const copy = getHolidaysScreenCopy();
@@ -14,6 +21,7 @@ export function useHolidaysScreen() {
 
   const [month, setMonth] = useState(defaults.month);
   const [year, setYear] = useState(defaults.year);
+  const [yearHolidays, setYearHolidays] = useState<Holiday[]>([]);
   const [holidays, setHolidays] = useState<Holiday[]>([]);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,13 +32,20 @@ export function useHolidaysScreen() {
     setLoading(true);
     setError(null);
 
-    getHolidays({ month, year })
-      .then(setHolidays)
+    getHolidaysForYear({ year })
+      .then((data) => {
+        setYearHolidays(data);
+        setHolidays(filterHolidaysByMonth(data, month));
+      })
       .catch((err) =>
         setError(err instanceof Error ? err.message : copy.unknownError)
       )
       .finally(() => setLoading(false));
-  }, [month, year]);
+  }, [year]);
+
+  useEffect(() => {
+    setHolidays(filterHolidaysByMonth(yearHolidays, month));
+  }, [month, yearHolidays]);
 
   const openYearSheet = async () => {
     yearSheet.open();
@@ -65,6 +80,7 @@ export function useHolidaysScreen() {
     copy,
     month,
     year,
+    yearHolidays,
     holidays,
     availableYears,
     loading,

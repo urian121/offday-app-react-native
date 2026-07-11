@@ -42,7 +42,7 @@ export function HolidayFilters({
   onYearPress,
 }: HolidayFiltersProps) {
   return (
-    <View className="mt-6 overflow-hidden rounded-2xl bg-white/40">
+    <View className="mt-24 overflow-hidden rounded-2xl bg-white/40">
       <View className="flex-row">
         <FilterSegment
           label={copy.month}

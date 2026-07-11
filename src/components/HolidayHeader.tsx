@@ -16,7 +16,7 @@ export function HolidayHeader({
   copy,
 }: HolidayHeaderProps) {
   return (
-    <View className="pt-2">
+    <View className="pt-10">
       <Text className="text-[11px] font-medium uppercase tracking-[3px] text-brand-muted">
         OffDay
       </Text>

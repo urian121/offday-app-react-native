@@ -1,5 +1,6 @@
 import { View } from "react-native";
 import { useHolidaysScreen } from "../hooks/useHolidaysScreen";
+import { useMonthInsight } from "../hooks/useMonthInsight";
 import { MONTH_OPTIONS } from "../utils/dateFormat";
 import { HolidayFilterSheet } from "./HolidayFilterSheet";
 import { HolidayFilters } from "./HolidayFilters";
@@ -11,6 +12,7 @@ export function HolidaysScreen() {
     copy,
     month,
     year,
+    yearHolidays,
     holidays,
     availableYears,
     loading,
@@ -23,6 +25,18 @@ export function HolidaysScreen() {
     selectMonth,
     selectYear,
   } = useHolidaysScreen();
+
+  const {
+    insight,
+    loading: insightLoading,
+    error: insightError,
+  } = useMonthInsight({
+    month,
+    year,
+    yearHolidays,
+    holidaysReady: !loading,
+    holidaysError: error,
+  });
 
   const yearOptions = availableYears.map((value) => ({
     value,
@@ -55,6 +69,9 @@ export function HolidaysScreen() {
             error={error}
             listKey={`${month}-${year}`}
             copy={copy}
+            insight={insight}
+            insightLoading={insightLoading}
+            insightError={insightError}
           />
         </View>
       </View>

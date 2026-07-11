@@ -2,7 +2,13 @@ import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { Holiday } from "../interface/holiday";
 import { formatHolidayDay, formatWeekdayShort } from "../utils/dateFormat";
+import {
+  formatSubdivisionCodes,
+  getHolidayTypeLabel,
+  isRegionalHoliday,
+} from "../utils/holidayMeta";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
+import { MonthInsight } from "./MonthInsight";
 
 type HolidayListProps = {
   holidays: Holiday[];
@@ -10,18 +16,52 @@ type HolidayListProps = {
   error: string | null;
   listKey: string;
   copy: ReturnType<typeof getHolidaysScreenCopy>;
+  insight: string | null;
+  insightLoading: boolean;
+  insightError: string | null;
 };
 
 const STAGGER_MS = 75;
 const ENTER_DURATION = 320;
 
+function MetaChip({
+  label,
+  variant,
+}: {
+  label: string;
+  variant: "accent" | "muted" | "neutral";
+}) {
+  const styles = {
+    accent: "bg-brand-accent-soft/60",
+    muted: "bg-brand-surface/90",
+    neutral: "bg-white/70",
+  } as const;
+
+  const textStyles = {
+    accent: "text-brand-accent",
+    muted: "text-brand-ink",
+    neutral: "text-brand-muted",
+  } as const;
+
+  return (
+    <View className={`rounded-md px-2 py-0.5 ${styles[variant]}`}>
+      <Text className={`text-[11px] ${textStyles[variant]}`}>{label}</Text>
+    </View>
+  );
+}
+
 function HolidayCard({
   holiday,
-  nationalLabel,
+  copy,
 }: {
   holiday: Holiday;
-  nationalLabel: string;
+  copy: ReturnType<typeof getHolidaysScreenCopy>;
 }) {
+  const regional = isRegionalHoliday(holiday);
+  const subdivisions = regional
+    ? formatSubdivisionCodes(holiday.subdivisionCodes)
+    : null;
+
   return (
     <View className="flex-row gap-4 rounded-2xl bg-white/50 px-4 py-4">
       <View className="w-12 items-center rounded-xl bg-brand-surface/80 py-2">
@@ -35,10 +75,25 @@ function HolidayCard({
 
       <View className="flex-1 justify-center">
         <Text className="text-[15px] leading-5 text-brand-ink">{holiday.name}</Text>
-        {holiday.nationalHoliday ? (
-          <View className="mt-2 self-start rounded-md bg-brand-accent-soft/60 px-2 py-0.5">
-            <Text className="text-[11px] text-brand-accent">{nationalLabel}</Text>
-          </View>
+
+        <View className="mt-2 flex-row flex-wrap gap-1.5">
+          <MetaChip
+            label={regional ? copy.regional : copy.national}
+            variant={regional ? "muted" : "accent"}
+          />
+          {holiday.holidayTypes.map((type) => (
+            <MetaChip
+              key={type}
+              label={getHolidayTypeLabel(type, copy)}
+              variant="neutral"
+            />
+          ))}
+        </View>
+
+        {subdivisions ? (
+          <Text className="mt-1.5 text-[11px] leading-4 text-brand-muted">
+            {subdivisions}
+          </Text>
         ) : null}
       </View>
     </View>
@@ -48,11 +103,11 @@ function HolidayCard({
 function AnimatedHolidayItem({
   holiday,
   index,
-  nationalLabel,
+  copy,
 }: {
   holiday: Holiday;
   index: number;
-  nationalLabel: string;
+  copy: ReturnType<typeof getHolidaysScreenCopy>;
 }) {
   return (
     <Animated.View
@@ -63,7 +118,7 @@ function AnimatedHolidayItem({
         .stiffness(180)}
       className="mb-3"
     >
-      <HolidayCard holiday={holiday} nationalLabel={nationalLabel} />
+      <HolidayCard holiday={holiday} copy={copy} />
     </Animated.View>
   );
 }
@@ -74,6 +129,9 @@ export function HolidayList({
   error,
   listKey,
   copy,
+  insight,
+  insightLoading,
+  insightError,
 }: HolidayListProps) {
   if (loading) {
     return (
@@ -93,10 +151,18 @@ export function HolidayList({
 
   if (holidays.length === 0) {
     return (
-      <View className="rounded-2xl bg-brand-surface/50 px-5 py-10">
-        <Text className="text-center text-sm leading-5 text-brand-muted">
-          {copy.noHolidays}
-        </Text>
+      <View>
+        <View className="rounded-2xl bg-brand-surface/50 px-5 py-10">
+          <Text className="text-center text-sm leading-5 text-brand-muted">
+            {copy.noHolidays}
+          </Text>
+        </View>
+        <MonthInsight
+          insight={insight}
+          loading={insightLoading}
+          error={insightError}
+          copy={copy}
+        />
       </View>
     );
   }
@@ -108,12 +174,16 @@ export function HolidayList({
       keyExtractor={(item) => item.date + item.name}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 32 }}
-      renderItem={({ item, index }) => (
-        <AnimatedHolidayItem
-          holiday={item}
-          index={index}
-          nationalLabel={copy.national}
+      ListFooterComponent={
+        <MonthInsight
+          insight={insight}
+          loading={insightLoading}
+          error={insightError}
+          copy={copy}
         />
+      }
+      renderItem={({ item, index }) => (
+        <AnimatedHolidayItem holiday={item} index={index} copy={copy} />
       )}
     />
   );
