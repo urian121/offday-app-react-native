@@ -1,22 +1,26 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { LinearGradient } from "expo-linear-gradient";
+import { StyleSheet, Text, View } from "react-native";
 import { HolidaysScreen } from "./src/components/HolidaysScreen";
 import "./global.css";
 
 export default function App() {
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={["#EBB02D", "#F7F5F1", "#FFFFFF"]}
+      locations={[0, 0.4, 0.7]}
+      style={styles.container}
+    >
       <Text className="text-red-500">OffDay</Text>
       <StatusBar style="auto" hidden={true} />
       <HolidaysScreen />
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "red",
     alignItems: "center",
     justifyContent: "center",
   },
