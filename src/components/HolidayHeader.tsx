@@ -24,19 +24,21 @@ export function HolidayHeader({
           resizeMode="contain"
           accessibilityLabel="OffDay"
         />
-        <Text className="text-xl font-medium tracking-wide text-brand-ink">
+        <Text className="text-3xl font-medium tracking-wide text-brand-ink">
           OffDay
         </Text>
       </View>
 
       <View className="mt-5 flex-row items-end gap-3">
-        <Text className="capitalize text-[40px] leading-[42px] text-brand-ink">
+        <Text className="mb-1 capitalize text-[34px] leading-[36px] text-brand-ink">
           {formatMonthName(month)}
         </Text>
-        <Text className="mb-1.5 text-lg text-brand-muted">{year}</Text>
+        <Text className="text-[52px] leading-[54px] text-brand-muted">
+          {year}
+        </Text>
       </View>
 
-      <Text className="mt-2 text-sm text-brand-muted">
+      <Text className="mt-2 text-lg text-brand-muted">
         {copy.holidaysThisMonth(holidayCount)}
       </Text>
     </View>
