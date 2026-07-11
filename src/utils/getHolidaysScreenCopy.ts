@@ -1,4 +1,4 @@
-import { getDeviceLocale } from "../utils/getDeviceLocale";
+import { getDeviceLocale } from "./getDeviceLocale";
 
 const COPY = {
   es: {
@@ -7,6 +7,11 @@ const COPY = {
     noHolidays: "No hay festivos este mes.",
     national: "Nacional",
     unknownError: "Error desconocido",
+    month: "Mes",
+    year: "Año",
+    selectMonth: "Seleccionar mes",
+    selectYear: "Seleccionar año",
+    loadingYears: "Cargando años...",
   },
   en: {
     holidaysThisMonth: (count: number) =>
@@ -14,6 +19,11 @@ const COPY = {
     noHolidays: "No holidays this month.",
     national: "National",
     unknownError: "Unknown error",
+    month: "Month",
+    year: "Year",
+    selectMonth: "Select month",
+    selectYear: "Select year",
+    loadingYears: "Loading years...",
   },
 } as const;
 

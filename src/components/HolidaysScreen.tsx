@@ -1,79 +1,86 @@
-import { View, Text, FlatList, ActivityIndicator } from "react-native";
-import { useEffect, useState } from "react";
-import { Holiday } from "../interface/holiday";
-import { getHolidays } from "../services/holidaysService";
-import { getDefaultHolidayQueryParams } from "../utils/getDefaultHolidayQueryParams";
-import { formatMonthYear } from "../utils/formatMonthYear";
-import { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
-
-const { month, year } = getDefaultHolidayQueryParams();
-const copy = getHolidaysScreenCopy();
-
-function formatDay(date: string): string {
-  const [, , day] = date.split("-");
-  return String(Number(day));
-}
+import { View } from "react-native";
+import { useHolidaysScreen } from "../hooks/useHolidaysScreen";
+import { MONTH_OPTIONS } from "../utils/dateFormat";
+import { HolidayFilterSheet } from "./HolidayFilterSheet";
+import { HolidayFilters } from "./HolidayFilters";
+import { HolidayHeader } from "./HolidayHeader";
+import { HolidayList } from "./HolidayList";
 
 export function HolidaysScreen() {
-  const [holidays, setHolidays] = useState<Holiday[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    copy,
+    month,
+    year,
+    holidays,
+    availableYears,
+    loading,
+    yearsLoading,
+    error,
+    monthSheet,
+    yearSheet,
+    openMonthSheet,
+    openYearSheet,
+    selectMonth,
+    selectYear,
+  } = useHolidaysScreen();
 
-  useEffect(() => {
-    getHolidays()
-      .then(setHolidays)
-      .catch((err) =>
-        setError(err instanceof Error ? err.message : copy.unknownError)
-      )
-      .finally(() => setLoading(false));
-  }, []);
-
-  const monthLabel = formatMonthYear(month, year);
+  const yearOptions = availableYears.map((value) => ({
+    value,
+    label: String(value),
+  }));
 
   return (
-    <View className="w-full px-5 pt-2">
-      <Text className="text-2xl font-semibold text-stone-800">{monthLabel}</Text>
-      <Text className="mt-1 text-sm text-stone-500">
-        {copy.holidaysThisMonth(holidays.length)}
-      </Text>
+    <>
+      <View className="flex-1">
+        <View className="px-6">
+          <HolidayHeader
+            month={month}
+            year={year}
+            holidayCount={holidays.length}
+            copy={copy}
+          />
+          <HolidayFilters
+            month={month}
+            year={year}
+            copy={copy}
+            onMonthPress={openMonthSheet}
+            onYearPress={openYearSheet}
+          />
+        </View>
 
-      {loading && (
-        <ActivityIndicator className="mt-8" color="#7A7269" />
-      )}
+        <View className="mt-7 flex-1 rounded-t-[32px] bg-brand-base/95 px-6 pt-7">
+          <HolidayList
+            holidays={holidays}
+            loading={loading}
+            error={error}
+            listKey={`${month}-${year}`}
+            copy={copy}
+          />
+        </View>
+      </View>
 
-      {error && (
-        <Text className="mt-6 text-sm text-red-700">{error}</Text>
-      )}
+      <HolidayFilterSheet
+        sheetRef={monthSheet.ref}
+        visible={monthSheet.mounted}
+        title={copy.selectMonth}
+        options={MONTH_OPTIONS}
+        selected={month}
+        onDismiss={() => monthSheet.setMounted(false)}
+        onSelect={selectMonth}
+        capitalizeLabels
+      />
 
-      {!loading && !error && holidays.length === 0 && (
-        <Text className="mt-6 text-sm text-stone-500">{copy.noHolidays}</Text>
-      )}
-
-      {!loading && !error && holidays.length > 0 && (
-        <FlatList
-          className="mt-5"
-          data={holidays}
-          keyExtractor={(item) => item.date + item.name}
-          ItemSeparatorComponent={() => (
-            <View className="h-px bg-stone-800/10" />
-          )}
-          renderItem={({ item }) => (
-            <View className="flex-row items-baseline gap-3 py-3">
-              <Text className="w-8 text-right text-lg font-medium text-stone-800">
-                {formatDay(item.date)}
-              </Text>
-              <View className="flex-1">
-                <Text className="text-base text-stone-800">{item.name}</Text>
-                {item.nationalHoliday && (
-                  <Text className="mt-0.5 text-xs text-stone-500">
-                    {copy.national}
-                  </Text>
-                )}
-              </View>
-            </View>
-          )}
-        />
-      )}
-    </View>
+      <HolidayFilterSheet
+        sheetRef={yearSheet.ref}
+        visible={yearSheet.mounted}
+        title={copy.selectYear}
+        options={yearOptions}
+        selected={year}
+        loading={yearsLoading}
+        loadingLabel={copy.loadingYears}
+        onDismiss={() => yearSheet.setMounted(false)}
+        onSelect={selectYear}
+      />
+    </>
   );
 }

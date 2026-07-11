@@ -24,6 +24,9 @@ GET /api/v4/Holidays/{CountryCode}/{Year}
 
 No hay parámetro de mes en la API. El filtrado por mes se hace **en el cliente** sobre el array devuelto.
 
+### Años disponibles
+La API v4 no expone un endpoint de años disponibles. `getAvailableYears` en `holidaysService` los descubre con peticiones `HEAD` al endpoint de festivos por año (rango 2000–2040), cacheados por país.
+
 ### Modelo de respuesta (`Holiday[]`)
 ```json
 {
@@ -60,6 +63,15 @@ No hay parámetro de mes en la API. El filtrado por mes se hace **en el cliente*
 - Un archivo por dominio (ej. `holiday.ts`, `country.ts`).
 - Los servicios, componentes y hooks **importan** desde ahí; no definen interfaces inline ni en archivos de lógica.
 - No duplicar tipos en múltiples archivos.
+
+### Componentes (`src/components/`)
+- Pantallas delgadas: solo composición y layout.
+- Lógica de estado en `src/hooks/`.
+- Subcomponentes por responsabilidad (lista, filtros, sheets), no archivos monolíticos.
+- Servicios de API en `src/services/` (sin JSX, extensión `.ts`).
+
+### Utilidades (`src/utils/`)
+- Funciones puras y helpers reutilizables, agrupadas por dominio (ej. `dateFormat.ts`, `getDeviceLocale.ts`).
 
 ## Stack
 - Expo + React Native + TypeScript
