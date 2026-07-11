@@ -8,6 +8,7 @@ import {
   isRegionalHoliday,
 } from "../utils/holidayMeta";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
+import { getHolidayDisplayName } from "../utils/getHolidayDisplayName";
 import { MonthInsight } from "./MonthInsight";
 
 type HolidayListProps = {
@@ -74,7 +75,9 @@ function HolidayCard({
       </View>
 
       <View className="flex-1 justify-center">
-        <Text className="text-[15px] leading-5 text-brand-ink">{holiday.name}</Text>
+        <Text className="text-[15px] leading-5 text-brand-ink">
+          {getHolidayDisplayName(holiday)}
+        </Text>
 
         <View className="mt-2 flex-row flex-wrap gap-1.5">
           <MetaChip

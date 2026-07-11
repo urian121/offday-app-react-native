@@ -1,11 +1,18 @@
 import { Holiday, HolidayQueryParams } from "../interface/holiday";
 import { getDefaultHolidayQueryParams } from "../utils/getDefaultHolidayQueryParams";
 
-const BASE_URL = "https://date.nager.at/api/v4/Holidays";
+const V4_BASE_URL = "https://date.nager.at/api/v4/Holidays";
+const V3_BASE_URL = "https://date.nager.at/api/v3/PublicHolidays";
 const MIN_PROBE_YEAR = 2000;
 const MAX_PROBE_YEAR = 2040;
 
 const availableYearsCache = new Map<string, number[]>();
+const localNamesCache = new Map<string, Map<string, string>>();
+
+type HolidayV3 = {
+  date: string;
+  localName: string;
+};
 
 function filterByMonth(holidays: Holiday[], month: number): Holiday[] {
   return holidays.filter((holiday) => {
@@ -14,11 +21,11 @@ function filterByMonth(holidays: Holiday[], month: number): Holiday[] {
   });
 }
 
-async function fetchYearHolidays(
+async function fetchV4YearHolidays(
   countryCode: string,
   year: number
 ): Promise<Holiday[]> {
-  const url = `${BASE_URL}/${countryCode.toUpperCase()}/${year}`;
+  const url = `${V4_BASE_URL}/${countryCode.toUpperCase()}/${year}`;
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -26,6 +33,55 @@ async function fetchYearHolidays(
   }
 
   return response.json();
+}
+
+async function fetchLocalNamesMap(
+  countryCode: string,
+  year: number
+): Promise<Map<string, string>> {
+  const code = countryCode.toUpperCase();
+  const cacheKey = `${code}-${year}`;
+  const cached = localNamesCache.get(cacheKey);
+
+  if (cached) {
+    return cached;
+  }
+
+  try {
+    const url = `${V3_BASE_URL}/${year}/${code}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      return new Map();
+    }
+
+    const data: HolidayV3[] = await response.json();
+    const localNames = new Map(
+      data.map((holiday) => [holiday.date, holiday.localName])
+    );
+
+    localNamesCache.set(cacheKey, localNames);
+    return localNames;
+  } catch {
+    return new Map();
+  }
+}
+
+async function fetchYearHolidays(
+  countryCode: string,
+  year: number
+): Promise<Holiday[]> {
+  const code = countryCode.toUpperCase();
+
+  const [v4Holidays, localNames] = await Promise.all([
+    fetchV4YearHolidays(code, year),
+    fetchLocalNamesMap(code, year),
+  ]);
+
+  return v4Holidays.map((holiday) => ({
+    ...holiday,
+    localName: localNames.get(holiday.date) ?? null,
+  }));
 }
 
 export async function getHolidaysForYear(
@@ -68,7 +124,7 @@ export async function getAvailableYears(
 
   const checks = await Promise.all(
     years.map(async (year) => {
-      const response = await fetch(`${BASE_URL}/${code}/${year}`, {
+      const response = await fetch(`${V4_BASE_URL}/${code}/${year}`, {
         method: "HEAD",
       });
       return response.ok ? year : null;

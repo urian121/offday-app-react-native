@@ -9,6 +9,7 @@ export type HolidayType =
 export interface Holiday {
   date: string;
   name: string;
+  localName?: string | null;
   countryCode: string;
   nationalHoliday: boolean;
   subdivisionCodes: string[] | null;

@@ -1,6 +1,7 @@
 import { Holiday } from "../interface/holiday";
 import { YearHolidayStats } from "../interface/monthInsight";
 import { formatMonthName } from "./dateFormat";
+import { getHolidayDisplayName } from "./getHolidayDisplayName";
 
 export function buildYearHolidayStats(
   holidays: Holiday[],
@@ -20,7 +21,7 @@ export function buildYearHolidayStats(
       monthName: formatMonthName(month),
       count: monthHolidays.length,
       holidays: monthHolidays.map((holiday) => ({
-        name: holiday.name,
+        name: getHolidayDisplayName(holiday),
         date: holiday.date,
         national: holiday.nationalHoliday,
         types: holiday.holidayTypes,
