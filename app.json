@@ -10,9 +10,11 @@
       "backgroundColor": "#E9C980"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.developerurian.offday"
     },
     "android": {
+      "package": "com.developerurian.offday",
       "adaptiveIcon": {
         "backgroundColor": "#E9C980",
         "foregroundImage": "./assets/icon.png"

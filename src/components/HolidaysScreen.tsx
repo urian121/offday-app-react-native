@@ -62,6 +62,7 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
             month={month}
             year={year}
             holidayCount={holidays.length}
+            yearHolidayCount={yearHolidays.length}
             copy={copy}
           />
           <HolidayFilters

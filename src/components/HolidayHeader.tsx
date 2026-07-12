@@ -6,6 +6,7 @@ type HolidayHeaderProps = {
   month: number;
   year: number;
   holidayCount: number;
+  yearHolidayCount: number;
   copy: ReturnType<typeof getHolidaysScreenCopy>;
 };
 
@@ -13,6 +14,7 @@ export function HolidayHeader({
   month,
   year,
   holidayCount,
+  yearHolidayCount,
   copy,
 }: HolidayHeaderProps) {
   return (
@@ -30,16 +32,19 @@ export function HolidayHeader({
       </View>
 
       <View className="mt-5 flex-row items-end gap-3">
-        <Text className="mb-1 capitalize text-[34px] leading-[36px] text-brand-ink">
+        <Text className="mb-1 capitalize text-[34px] mr-3 leading-[36px] text-brand-ink">
           {formatMonthName(month)}
         </Text>
-        <Text className="text-[52px] leading-[54px] text-brand-muted">
+        <Text className="mb-0 text-[64px] font-bold leading-[66px] text-brand-ink">
           {year}
         </Text>
       </View>
 
-      <Text className="mt-2 text-lg text-brand-muted">
+      <Text className="mt-2 text-lg font-medium text-brand-ink">
         {copy.holidaysThisMonth(holidayCount)}
+      </Text>
+      <Text className="mt-1 text-base font-medium text-brand-ink/85">
+        {copy.holidaysThisYear(yearHolidayCount, year)}
       </Text>
     </View>
   );

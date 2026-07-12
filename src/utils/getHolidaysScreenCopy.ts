@@ -4,6 +4,8 @@ const COPY = {
   es: {
     holidaysThisMonth: (count: number) =>
       `${count} festivo${count === 1 ? "" : "s"} este mes`,
+    holidaysThisYear: (count: number, year: number) =>
+      `${count} festivo${count === 1 ? "" : "s"} en ${year}`,
     noHolidays: "No hay festivos este mes.",
     national: "Nacional",
     regional: "Regional",
@@ -30,6 +32,8 @@ const COPY = {
   en: {
     holidaysThisMonth: (count: number) =>
       `${count} holiday${count === 1 ? "" : "s"} this month`,
+    holidaysThisYear: (count: number, year: number) =>
+      `${count} holiday${count === 1 ? "" : "s"} in ${year}`,
     noHolidays: "No holidays this month.",
     national: "National",
     regional: "Regional",
