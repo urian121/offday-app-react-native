@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Holiday } from "../interface/holiday";
 import { generateMonthInsight } from "../services/monthInsightService";
 import { buildYearHolidayStats } from "../utils/buildYearHolidayStats";
-import { getDefaultHolidayQueryParams } from "../utils/getDefaultHolidayQueryParams";
 
 type UseMonthInsightParams = {
   month: number;
   year: number;
+  countryCode: string;
   yearHolidays: Holiday[];
   holidaysReady: boolean;
   holidaysError: string | null;
@@ -15,6 +15,7 @@ type UseMonthInsightParams = {
 export function useMonthInsight({
   month,
   year,
+  countryCode,
   yearHolidays,
   holidaysReady,
   holidaysError,
@@ -32,8 +33,6 @@ export function useMonthInsight({
     }
 
     let cancelled = false;
-    const countryCode = getDefaultHolidayQueryParams().countryCode;
-
     setLoading(true);
     setError(null);
     setInsight(null);
@@ -66,7 +65,14 @@ export function useMonthInsight({
     return () => {
       cancelled = true;
     };
-  }, [month, year, yearHolidays, holidaysReady, holidaysError]);
+  }, [
+    month,
+    year,
+    countryCode,
+    yearHolidays,
+    holidaysReady,
+    holidaysError,
+  ]);
 
   return { insight, loading, error };
 }

@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { useHolidaysScreen } from "../hooks/useHolidaysScreen";
 import { useMonthInsight } from "../hooks/useMonthInsight";
 import { MONTH_OPTIONS } from "../utils/dateFormat";
+import { CountryFilterSheet } from "./CountryFilterSheet";
 import { HolidayFilterSheet } from "./HolidayFilterSheet";
 import { HolidayFilters } from "./HolidayFilters";
 import { HolidayHeader } from "./HolidayHeader";
@@ -17,18 +18,24 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
     copy,
     month,
     year,
+    countryCode,
+    country,
+    countries,
+    countriesLoading,
     yearHolidays,
     holidays,
     availableYears,
     loading,
-    yearsLoading,
     error,
+    countrySheet,
     monthSheet,
     yearSheet,
     openMonthSheet,
     openYearSheet,
+    openCountrySheet,
     selectMonth,
     selectYear,
+    selectCountry,
   } = useHolidaysScreen();
 
   const {
@@ -38,6 +45,7 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
   } = useMonthInsight({
     month,
     year,
+    countryCode,
     yearHolidays,
     holidaysReady: !loading,
     holidaysError: error,
@@ -61,9 +69,11 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
           <HolidayHeader
             month={month}
             year={year}
+            country={country}
             holidayCount={holidays.length}
             yearHolidayCount={yearHolidays.length}
             copy={copy}
+            onCountryPress={openCountrySheet}
           />
           <HolidayFilters
             month={month}
@@ -79,7 +89,7 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
             holidays={holidays}
             loading={loading}
             error={error}
-            listKey={`${month}-${year}`}
+            listKey={`${countryCode}-${month}-${year}`}
             copy={copy}
             insight={insight}
             insightLoading={insightLoading}
@@ -87,6 +97,17 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
           />
         </View>
       </View>
+
+      <CountryFilterSheet
+        sheetRef={countrySheet.ref}
+        visible={countrySheet.mounted}
+        countries={countries}
+        selectedCountryCode={countryCode}
+        loading={countriesLoading}
+        copy={copy}
+        onDismiss={() => countrySheet.setMounted(false)}
+        onSelect={selectCountry}
+      />
 
       <HolidayFilterSheet
         sheetRef={monthSheet.ref}
@@ -105,8 +126,6 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
         title={copy.selectYear}
         options={yearOptions}
         selected={year}
-        loading={yearsLoading}
-        loadingLabel={copy.loadingYears}
         onDismiss={() => yearSheet.setMounted(false)}
         onSelect={selectYear}
       />

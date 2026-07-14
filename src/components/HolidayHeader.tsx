@@ -1,34 +1,67 @@
-import { Image, Text, View } from "react-native";
+import getCountryFlag from "country-flag-icons/unicode";
+import { Image, Pressable, Text, View } from "react-native";
+import type { Country } from "../interface/country";
 import { formatMonthName } from "../utils/dateFormat";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 
 type HolidayHeaderProps = {
   month: number;
   year: number;
+  country: Country | null;
   holidayCount: number;
   yearHolidayCount: number;
   copy: ReturnType<typeof getHolidaysScreenCopy>;
+  onCountryPress: () => void;
 };
 
 export function HolidayHeader({
   month,
   year,
+  country,
   holidayCount,
   yearHolidayCount,
   copy,
+  onCountryPress,
 }: HolidayHeaderProps) {
   return (
     <View className="pt-2">
-      <View className="flex-row items-center gap-3 mb-14">
-        <Image
-          source={require("../../assets/icon.png")}
-          className="h-14 w-14 rounded-2xl"
-          resizeMode="contain"
-          accessibilityLabel="OffDay"
-        />
-        <Text className="text-3xl font-medium tracking-wide text-brand-ink">
-          OffDay
-        </Text>
+      <View className="mb-14 flex-row items-center justify-between gap-4">
+        <View className="flex-row items-center gap-3">
+          <Image
+            source={require("../../assets/icon.png")}
+            className="h-14 w-14 rounded-2xl"
+            resizeMode="contain"
+            accessibilityLabel="OffDay"
+          />
+          <Text className="text-3xl font-medium tracking-wide text-brand-ink">
+            OffDay
+          </Text>
+        </View>
+
+        <Pressable
+          onPress={onCountryPress}
+          className="max-w-[44%] flex-row items-center gap-2 rounded-xl bg-white/40 px-3 py-2 active:opacity-70"
+          accessibilityRole="button"
+          accessibilityLabel={country?.name ?? copy.selectCountry}
+        >
+          {country ? (
+            <Text
+              className="text-2xl"
+              accessibilityLabel={`Bandera de ${country.name}`}
+            >
+              {getCountryFlag(country.countryCode)}
+            </Text>
+          ) : null}
+
+          <View className="min-w-0 flex-1 items-end">
+            <Text
+              className="text-right text-sm font-medium text-brand-ink"
+              numberOfLines={1}
+            >
+              {country?.name ?? country?.countryCode.toUpperCase()}
+            </Text>
+          </View>
+        </Pressable>
       </View>
 
       <View className="mt-5 flex-row items-end gap-3">

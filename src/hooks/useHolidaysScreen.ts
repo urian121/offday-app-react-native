@@ -1,11 +1,24 @@
 import { useEffect, useState } from "react";
+import type { Country } from "../interface/country";
 import { Holiday } from "../interface/holiday";
-import { getAvailableYears, getHolidaysForYear } from "../services/holidaysService";
+import { getAvailableCountries } from "../services/countriesService";
+import { getHolidaysForYear } from "../services/holidaysService";
 import { getDefaultHolidayQueryParams } from "../utils/getDefaultHolidayQueryParams";
 import { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 import { useLazyBottomSheet } from "./useLazyBottomSheet";
 
 const defaults = getDefaultHolidayQueryParams();
+
+const YEARS_BACK = 1;
+const YEARS_FORWARD = 5;
+
+function buildYearOptions(): number[] {
+  const currentYear = new Date().getFullYear();
+  return Array.from(
+    { length: YEARS_BACK + YEARS_FORWARD + 1 },
+    (_, index) => currentYear - YEARS_BACK + index
+  );
+}
 
 function filterHolidaysByMonth(holidays: Holiday[], month: number): Holiday[] {
   return holidays.filter((holiday) => {
@@ -16,6 +29,7 @@ function filterHolidaysByMonth(holidays: Holiday[], month: number): Holiday[] {
 
 export function useHolidaysScreen() {
   const copy = getHolidaysScreenCopy();
+  const countrySheet = useLazyBottomSheet();
   const monthSheet = useLazyBottomSheet();
   const yearSheet = useLazyBottomSheet();
 
@@ -23,48 +37,69 @@ export function useHolidaysScreen() {
   const [year, setYear] = useState(defaults.year);
   const [yearHolidays, setYearHolidays] = useState<Holiday[]>([]);
   const [holidays, setHolidays] = useState<Holiday[]>([]);
-  const [availableYears, setAvailableYears] = useState<number[]>([]);
+  const [country, setCountry] = useState<Country | null>(null);
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [countriesLoading, setCountriesLoading] = useState(true);
+  const [availableYears] = useState<number[]>(buildYearOptions);
   const [loading, setLoading] = useState(true);
-  const [yearsLoading, setYearsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    getAvailableCountries()
+      .then((data) => {
+        setCountries(data);
+        setCountry(
+          data.find(
+            (item) => item.countryCode === defaults.countryCode.toUpperCase()
+          ) ?? {
+            countryCode: defaults.countryCode,
+            name: defaults.countryCode,
+          }
+        );
+      })
+      .catch(() => {
+        setCountry({
+          countryCode: defaults.countryCode,
+          name: defaults.countryCode,
+        });
+      })
+      .finally(() => setCountriesLoading(false));
+  }, []);
+
+  const selectedCountryCode = country?.countryCode ?? defaults.countryCode;
+
+  useEffect(() => {
+    let cancelled = false;
+
     setLoading(true);
     setError(null);
 
-    getHolidaysForYear({ year })
+    getHolidaysForYear({ year, countryCode: selectedCountryCode })
       .then((data) => {
-        setYearHolidays(data);
-        setHolidays(filterHolidaysByMonth(data, month));
+        if (!cancelled) {
+          setYearHolidays(data);
+          setHolidays(filterHolidaysByMonth(data, month));
+        }
       })
-      .catch((err) =>
-        setError(err instanceof Error ? err.message : copy.unknownError)
-      )
-      .finally(() => setLoading(false));
-  }, [year]);
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : copy.unknownError);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCountryCode, year]);
 
   useEffect(() => {
     setHolidays(filterHolidaysByMonth(yearHolidays, month));
   }, [month, yearHolidays]);
-
-  const openYearSheet = async () => {
-    yearSheet.open();
-
-    if (availableYears.length > 0) {
-      return;
-    }
-
-    setYearsLoading(true);
-
-    try {
-      const years = await getAvailableYears(defaults.countryCode);
-      setAvailableYears(years);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : copy.unknownError);
-    } finally {
-      setYearsLoading(false);
-    }
-  };
 
   const selectMonth = (value: number) => {
     setMonth(value);
@@ -76,21 +111,39 @@ export function useHolidaysScreen() {
     yearSheet.dismiss();
   };
 
+  const selectCountry = (countryCode: string) => {
+    const selectedCountry = countries.find(
+      (item) => item.countryCode === countryCode
+    );
+
+    if (selectedCountry) {
+      setCountry(selectedCountry);
+    }
+
+    countrySheet.dismiss();
+  };
+
   return {
     copy,
     month,
     year,
+    countryCode: selectedCountryCode,
+    country,
+    countries,
+    countriesLoading,
     yearHolidays,
     holidays,
     availableYears,
     loading,
-    yearsLoading,
     error,
+    countrySheet,
     monthSheet,
     yearSheet,
+    openCountrySheet: countrySheet.open,
     openMonthSheet: monthSheet.open,
-    openYearSheet,
+    openYearSheet: yearSheet.open,
     selectMonth,
     selectYear,
+    selectCountry,
   };
 }

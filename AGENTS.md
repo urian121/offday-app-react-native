@@ -25,7 +25,7 @@ GET /api/v4/Holidays/{CountryCode}/{Year}
 No hay parámetro de mes en la API. El filtrado por mes se hace **en el cliente** sobre el array devuelto.
 
 ### Años disponibles
-La API v4 no expone un endpoint de años disponibles. `getAvailableYears` en `holidaysService` los descubre con peticiones `HEAD` al endpoint de festivos por año (rango 2000–2040), cacheados por país.
+La API v4 no expone un endpoint de años disponibles. El selector de año usa una lista local generada en `useHolidaysScreen` (año actual −1 hasta año actual +5), sin consultar la API.
 
 ### Modelo de respuesta (`Holiday[]`)
 ```json

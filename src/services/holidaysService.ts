@@ -3,10 +3,7 @@ import { getDefaultHolidayQueryParams } from "../utils/getDefaultHolidayQueryPar
 
 const V4_BASE_URL = "https://date.nager.at/api/v4/Holidays";
 const V3_BASE_URL = "https://date.nager.at/api/v3/PublicHolidays";
-const MIN_PROBE_YEAR = 2000;
-const MAX_PROBE_YEAR = 2040;
 
-const availableYearsCache = new Map<string, number[]>();
 const localNamesCache = new Map<string, Map<string, string>>();
 
 type HolidayV3 = {
@@ -105,36 +102,4 @@ export async function getHolidays(
 
   const data = await fetchYearHolidays(countryCode, year);
   return filterByMonth(data, month);
-}
-
-export async function getAvailableYears(
-  countryCode: string = getDefaultHolidayQueryParams().countryCode
-): Promise<number[]> {
-  const code = countryCode.toUpperCase();
-  const cached = availableYearsCache.get(code);
-
-  if (cached) {
-    return cached;
-  }
-
-  const years = Array.from(
-    { length: MAX_PROBE_YEAR - MIN_PROBE_YEAR + 1 },
-    (_, index) => MIN_PROBE_YEAR + index
-  );
-
-  const checks = await Promise.all(
-    years.map(async (year) => {
-      const response = await fetch(`${V4_BASE_URL}/${code}/${year}`, {
-        method: "HEAD",
-      });
-      return response.ok ? year : null;
-    })
-  );
-
-  const availableYears = checks
-    .filter((year): year is number => year !== null)
-    .sort((a, b) => b - a);
-
-  availableYearsCache.set(code, availableYears);
-  return availableYears;
 }
