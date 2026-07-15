@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { useHolidaysScreen } from "../hooks/useHolidaysScreen";
 import { useMonthInsight } from "../hooks/useMonthInsight";
 import { MONTH_OPTIONS } from "../utils/dateFormat";
@@ -92,10 +92,7 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
           />
         </View>
 
-        <View className="mt-7 flex-1 rounded-t-[32px] bg-brand-base/95 px-6 pt-7">
-          <Text className="mb-5 text-xl font-semibold text-brand-ink">
-            {copy.holidaysTitle}
-          </Text>
+        <View className="mt-7 flex-1 rounded-t-[32px] bg-brand-holiday-section px-6 pt-7">
           <View className="flex-1">
             <HolidayList
               holidays={holidays}

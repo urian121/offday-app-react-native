@@ -5,7 +5,7 @@ const COPY = {
     today: "Hoy",
     holidaysSummary: (monthCount: number, yearCount: number, year: number) =>
       `${monthCount} festivo${monthCount === 1 ? "" : "s"} este mes - ${yearCount} en todo ${year}`,
-    holidaysTitle: "Festivos este mes",
+    holidaysTitle: "Días festivos este mes",
     noHolidays: "No hay festivos este mes.",
     national: "Nacional",
     regional: "Regional",

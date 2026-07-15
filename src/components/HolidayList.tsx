@@ -143,6 +143,13 @@ function getHolidayKey(holiday: Holiday): string {
   ].join("-");
 }
 
+/** Muestra el título de la sección dentro del contenido desplazable. */
+function HolidayListTitle({ title }: { title: string }) {
+  return (
+    <Text className="mb-5 text-xl font-semibold text-brand-ink">{title}</Text>
+  );
+}
+
 /** Renderiza estados de carga/error y la lista mensual con su insight. */
 export function HolidayList({
   holidays,
@@ -156,16 +163,22 @@ export function HolidayList({
 }: HolidayListProps) {
   if (loading) {
     return (
-      <View className="items-center py-16">
-        <ActivityIndicator color="#7A7269" />
+      <View>
+        <HolidayListTitle title={copy.holidaysTitle} />
+        <View className="items-center py-16">
+          <ActivityIndicator color="#7A7269" />
+        </View>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View className="rounded-2xl bg-brand-accent-soft/35 px-4 py-4">
-        <Text className="text-sm leading-5 text-brand-ink">{error}</Text>
+      <View>
+        <HolidayListTitle title={copy.holidaysTitle} />
+        <View className="rounded-2xl bg-brand-accent-soft/35 px-4 py-4">
+          <Text className="text-sm leading-5 text-brand-ink">{error}</Text>
+        </View>
       </View>
     );
   }
@@ -188,6 +201,7 @@ export function HolidayList({
   if (holidays.length === 0) {
     return (
       <View>
+        <HolidayListTitle title={copy.holidaysTitle} />
         <View className="rounded-2xl bg-brand-surface/50 px-5 py-10">
           <Text className="text-center text-sm leading-5 text-brand-muted">
             {copy.noHolidays}
@@ -205,6 +219,7 @@ export function HolidayList({
       keyExtractor={getHolidayKey}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 32 }}
+      ListHeaderComponent={<HolidayListTitle title={copy.holidaysTitle} />}
       ListFooterComponent={listFooter}
       renderItem={({ item, index }) => (
         <AnimatedHolidayItem holiday={item} index={index} copy={copy} />

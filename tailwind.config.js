@@ -7,6 +7,8 @@ module.exports = {
       colors: {
         brand: {
           base: "#F7F5F1",
+          "holiday-section": "#F0DBA9",
+          "filter-surface": "#E1B653",
           surface: "#EFEBE4",
           ink: "#2B2622",
           muted: "#7A7269",

@@ -27,7 +27,7 @@ function FilterSegment({
       onPress={onPress}
       className={`flex-1 px-4 py-3.5 active:opacity-75 ${className}`}
     >
-      <Text className="text-sm font-medium uppercase tracking-wider text-brand-muted">
+      <Text className="text-sm font-medium uppercase tracking-wider text-white">
         {label}
       </Text>
       <Text className="mt-1 text-[15px] capitalize text-brand-ink">
@@ -46,7 +46,7 @@ export function HolidayFilters({
   onYearPress,
 }: HolidayFiltersProps) {
   return (
-    <View className="mt-10 overflow-hidden rounded-2xl bg-white/40">
+    <View className="mt-10 overflow-hidden rounded-2xl bg-brand-filter-surface">
       <View className="flex-row">
         <FilterSegment
           label={copy.month}
