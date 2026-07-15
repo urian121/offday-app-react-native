@@ -65,9 +65,15 @@ export function HolidayHeader({
         </Pressable>
       </View>
 
-      <Text className="text-lg font-medium text-brand-ink/75">
-        {formatCurrentDate()}
-      </Text>
+      <View className="flex-row items-center gap-2">
+        <Text className="text-lg font-medium text-brand-ink/75">
+          {copy.today}
+        </Text>
+        <Text className="text-base text-brand-muted">·</Text>
+        <Text className="text-lg font-medium text-brand-ink/75">
+          {formatCurrentDate()}
+        </Text>
+      </View>
 
       <View className="mt-2 flex-row items-end gap-3">
         <Text className="mb-1 capitalize text-[34px] mr-3 leading-[36px] text-brand-ink">
@@ -78,11 +84,13 @@ export function HolidayHeader({
         </Text>
       </View>
 
-      <Text className="mt-2 text-xl font-medium text-brand-ink">
-        {copy.holidaysThisMonth(holidayCount)}
-      </Text>
-      <Text className="mt-1 text-lg font-medium text-brand-ink/85">
-        {copy.holidaysThisYear(yearHolidayCount, year)}
+      <Text
+        className="mt-3 text-lg font-medium text-brand-ink/85"
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.85}
+      >
+        {copy.holidaysSummary(holidayCount, yearHolidayCount, year)}
       </Text>
     </View>
   );

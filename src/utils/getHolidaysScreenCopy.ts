@@ -2,10 +2,13 @@ import { getDeviceLocale } from "./getDeviceLocale";
 
 const COPY = {
   es: {
-    holidaysThisMonth: (count: number) =>
-      `${count} festivo${count === 1 ? "" : "s"} este mes`,
-    holidaysThisYear: (count: number, year: number) =>
-      `${count} festivo${count === 1 ? "" : "s"} en ${year}`,
+    today: "Hoy",
+    holidaysSummary: (
+      monthCount: number,
+      yearCount: number,
+      year: number
+    ) =>
+      `${monthCount} festivo${monthCount === 1 ? "" : "s"} este mes · ${yearCount} en todo ${year}`,
     noHolidays: "No hay festivos este mes.",
     national: "Nacional",
     regional: "Regional",
@@ -33,10 +36,13 @@ const COPY = {
     },
   },
   en: {
-    holidaysThisMonth: (count: number) =>
-      `${count} holiday${count === 1 ? "" : "s"} this month`,
-    holidaysThisYear: (count: number, year: number) =>
-      `${count} holiday${count === 1 ? "" : "s"} in ${year}`,
+    today: "Today",
+    holidaysSummary: (
+      monthCount: number,
+      yearCount: number,
+      year: number
+    ) =>
+      `${monthCount} holiday${monthCount === 1 ? "" : "s"} this month · ${yearCount} throughout ${year}`,
     noHolidays: "No holidays this month.",
     national: "National",
     regional: "Regional",
