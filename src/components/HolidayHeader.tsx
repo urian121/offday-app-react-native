@@ -69,7 +69,6 @@ export function HolidayHeader({
         <Text className="text-lg font-medium text-brand-ink/75">
           {copy.today}
         </Text>
-        <Text className="text-base text-brand-muted">·</Text>
         <Text className="text-lg font-medium text-brand-ink/75">
           {formatCurrentDate()}
         </Text>

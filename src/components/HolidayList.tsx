@@ -10,6 +10,7 @@ import {
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 import { getHolidayDisplayName } from "../utils/getHolidayDisplayName";
 import { MonthInsight } from "./MonthInsight";
+import { PlanRestCard } from "./PlanRestCard";
 
 type HolidayListProps = {
   holidays: Holiday[];
@@ -177,6 +178,12 @@ export function HolidayList({
       copy={copy}
     />
   );
+  const listFooter = (
+    <View>
+      <PlanRestCard copy={copy} />
+      {insightContent}
+    </View>
+  );
 
   if (holidays.length === 0) {
     return (
@@ -198,7 +205,7 @@ export function HolidayList({
       keyExtractor={getHolidayKey}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 32 }}
-      ListFooterComponent={insightContent}
+      ListFooterComponent={listFooter}
       renderItem={({ item, index }) => (
         <AnimatedHolidayItem holiday={item} index={index} copy={copy} />
       )}

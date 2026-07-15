@@ -27,7 +27,7 @@ function FilterSegment({
       onPress={onPress}
       className={`flex-1 px-4 py-3.5 active:opacity-75 ${className}`}
     >
-      <Text className="text-[12px] font-medium uppercase tracking-wider text-brand-muted">
+      <Text className="text-sm font-medium uppercase tracking-wider text-brand-muted">
         {label}
       </Text>
       <Text className="mt-1 text-[15px] capitalize text-brand-ink">
