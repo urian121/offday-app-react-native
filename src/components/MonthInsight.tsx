@@ -22,7 +22,7 @@ function LightbulbIcon() {
     >
       <Path
         d="M9 18h6M10 22h4M15.09 14c.18-.66.66-1.18 1.11-1.66a6 6 0 1 0-8.4 0c.45.48.93 1 1.11 1.66Z"
-        stroke="#C4715A"
+        stroke="#412402"
         strokeWidth={1.8}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -52,9 +52,9 @@ export function MonthInsight({
 }: MonthInsightProps) {
   if (loading) {
     return (
-      <View className="mt-5 items-center rounded-2xl bg-brand-surface/40 px-5 py-6">
-        <ActivityIndicator color="#7A7269" />
-        <Text className="mt-3 text-center text-base text-brand-muted">
+      <View className="mt-4 items-center rounded-[14px] bg-brand-gradient-start px-5 py-6">
+        <ActivityIndicator color="#633806" />
+        <Text className="mt-3 text-center text-base text-brand-brown">
           {copy.insightLoading}
         </Text>
       </View>
@@ -68,18 +68,18 @@ export function MonthInsight({
   const message = error ? resolveErrorMessage(error, copy) : insight;
 
   return (
-    <View className="mt-5 rounded-2xl bg-brand-surface/80 px-5 py-5">
+    <View className="mt-4 rounded-[14px] bg-brand-gradient-start px-4 py-4">
       <View className="flex-row items-center justify-between gap-3">
-        <Text className="flex-1 text-lg font-medium uppercase tracking-[2px] text-brand-muted">
+        <Text className="flex-1 text-[15px] font-medium uppercase tracking-[2px] text-brand-brown">
           {copy.insightTitle}
         </Text>
-        <View className="h-10 w-10 items-center justify-center rounded-xl bg-brand-accent-soft/50">
+        <View className="h-9 w-9 items-center justify-center rounded-[10px] bg-brand-calendar-surface">
           <LightbulbIcon />
         </View>
       </View>
       <Text
         className={`mt-2 leading-6 ${
-          error ? "text-base text-brand-muted" : "text-[17px] text-brand-ink"
+          error ? "text-base text-brand-brown" : "text-[16px] text-brand-deep"
         }`}
       >
         {message}

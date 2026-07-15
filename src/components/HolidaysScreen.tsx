@@ -73,7 +73,7 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
   return (
     <>
       <View className="flex-1">
-        <View className="px-6">
+        <View className="px-4">
           <HolidayHeader
             month={month}
             year={year}
@@ -92,7 +92,7 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
           />
         </View>
 
-        <View className="mt-7 flex-1 rounded-t-[32px] bg-brand-holiday-section px-6 pt-7">
+        <View className="mt-4 flex-1 rounded-t-[28px] bg-brand-holiday-section px-4 pt-6">
           <View className="flex-1">
             <HolidayList
               holidays={holidays}

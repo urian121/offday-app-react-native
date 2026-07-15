@@ -36,9 +36,9 @@ function AppContent() {
     useSplashScreen(contentReady);
 
   return (
-    <View className="flex-1 bg-brand-cream">
+    <View className="flex-1 bg-brand-base">
       <View className="flex-1">
-        <View className="absolute inset-x-0 top-0 h-[55%]">
+        <View className="absolute inset-x-0 top-0 h-[62%]">
           <LinearGradient
             colors={APP_GRADIENT_COLORS}
             locations={APP_GRADIENT_LOCATIONS}
