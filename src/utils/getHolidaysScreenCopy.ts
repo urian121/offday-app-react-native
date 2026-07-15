@@ -25,7 +25,7 @@ const COPY = {
     insightLoading: "Generando dato curioso...",
     insightError: "No se pudo generar el dato curioso.",
     insightMissingKey:
-      "Añade EXPO_PUBLIC_OPENAI_API_KEY en tu archivo .env y reinicia Expo.",
+      "Falta EXPO_PUBLIC_OPENAI_API_KEY en el build. Revisa tu .env y vuelve a generar el APK.",
     holidayTypeLabels: {
       Public: "Público",
       Bank: "Bancario",
@@ -59,7 +59,7 @@ const COPY = {
     insightLoading: "Generating a curious fact...",
     insightError: "Could not generate the month insight.",
     insightMissingKey:
-      "Add EXPO_PUBLIC_OPENAI_API_KEY to your .env file and restart Expo.",
+      "EXPO_PUBLIC_OPENAI_API_KEY is missing from this build. Check your .env and rebuild the APK.",
     holidayTypeLabels: {
       Public: "Public",
       Bank: "Bank",

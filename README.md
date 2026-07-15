@@ -46,11 +46,21 @@ Los nombres v3 se unen a v4 por `date`. Si v3 falla o las fechas no coinciden, s
 
 El insight compara el mes activo con todos los meses del mismo año y se cachea en memoria por país, año, mes, locale, modelo y versión del prompt.
 
-Variables requeridas:
+Variables requeridas (archivo `.env` en la raíz):
 
 ```env
 EXPO_PUBLIC_OPENAI_API_KEY=
 EXPO_PUBLIC_OPENAI_MODEL=gpt-4o-mini
+```
+
+- Con `npx expo start`, Expo carga el `.env` automáticamente.
+- Con `eas build --local`, el `.env` se lee en `app.config.js` y la clave se embebe en `extra` del binario.
+- Con EAS en la nube, configura las mismas variables en el proyecto de Expo (Environment variables), porque el `.env` está en `.gitignore` y no se sube.
+
+Vuelve a generar el APK después de tener el `.env` listo:
+
+```bash
+npx eas build --platform android --profile preview --local
 ```
 
 > `EXPO_PUBLIC_OPENAI_API_KEY` queda incluida en el bundle móvil. Antes de producción, la llamada debe trasladarse a un backend o función serverless que proteja la clave y aplique límites.
