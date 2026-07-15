@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { View } from "react-native";
 import { useHolidaysScreen } from "../hooks/useHolidaysScreen";
 import { useMonthInsight } from "../hooks/useMonthInsight";
@@ -13,7 +13,9 @@ type HolidaysScreenProps = {
   onReady?: () => void;
 };
 
+/** Orquesta los datos, filtros, lista y selectores de la pantalla principal. */
 export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
+  const hasReportedReady = useRef(false);
   const {
     copy,
     month,
@@ -26,6 +28,7 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
     holidays,
     availableYears,
     loading,
+    holidaysReady,
     error,
     countrySheet,
     monthSheet,
@@ -47,20 +50,25 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
     year,
     countryCode,
     yearHolidays,
-    holidaysReady: !loading,
+    holidaysReady,
     holidaysError: error,
   });
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && !hasReportedReady.current) {
+      hasReportedReady.current = true;
       onReady?.();
     }
   }, [loading, onReady]);
 
-  const yearOptions = availableYears.map((value) => ({
-    value,
-    label: String(value),
-  }));
+  const yearOptions = useMemo(
+    () =>
+      availableYears.map((value) => ({
+        value,
+        label: String(value),
+      })),
+    [availableYears]
+  );
 
   return (
     <>

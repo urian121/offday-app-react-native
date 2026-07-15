@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Country } from "../interface/country";
 import { Holiday } from "../interface/holiday";
 import { getAvailableCountries } from "../services/countriesService";
 import { getHolidaysForYear } from "../services/holidaysService";
 import { getDefaultHolidayQueryParams } from "../utils/getDefaultHolidayQueryParams";
 import { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
+import { filterHolidaysByMonth } from "../utils/holidayDate";
 import { useLazyBottomSheet } from "./useLazyBottomSheet";
 
 const defaults = getDefaultHolidayQueryParams();
@@ -12,6 +13,7 @@ const defaults = getDefaultHolidayQueryParams();
 const YEARS_BACK = 1;
 const YEARS_FORWARD = 5;
 
+/** Genera el rango local del selector: año actual -1 hasta año actual +5. */
 function buildYearOptions(): number[] {
   const currentYear = new Date().getFullYear();
   return Array.from(
@@ -20,13 +22,7 @@ function buildYearOptions(): number[] {
   );
 }
 
-function filterHolidaysByMonth(holidays: Holiday[], month: number): Holiday[] {
-  return holidays.filter((holiday) => {
-    const [, monthStr] = holiday.date.split("-");
-    return Number(monthStr) === month;
-  });
-}
-
+/** Coordina filtros, países, festivos y estados de los bottom sheets. */
 export function useHolidaysScreen() {
   const copy = getHolidaysScreenCopy();
   const countrySheet = useLazyBottomSheet();
@@ -36,81 +32,110 @@ export function useHolidaysScreen() {
   const [month, setMonth] = useState(defaults.month);
   const [year, setYear] = useState(defaults.year);
   const [yearHolidays, setYearHolidays] = useState<Holiday[]>([]);
-  const [holidays, setHolidays] = useState<Holiday[]>([]);
-  const [country, setCountry] = useState<Country | null>(null);
+  const [country, setCountry] = useState<Country>({
+    countryCode: defaults.countryCode,
+    name: defaults.countryCode,
+  });
   const [countries, setCountries] = useState<Country[]>([]);
   const [countriesLoading, setCountriesLoading] = useState(true);
-  const [availableYears] = useState<number[]>(buildYearOptions);
-  const [loading, setLoading] = useState(true);
+  const [isFetchingHolidays, setIsFetchingHolidays] = useState(true);
+  const [settledQueryKey, setSettledQueryKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getAvailableCountries()
+    const controller = new AbortController();
+
+    getAvailableCountries(controller.signal)
       .then((data) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+
         setCountries(data);
         setCountry(
           data.find(
             (item) => item.countryCode === defaults.countryCode.toUpperCase()
-          ) ?? {
-            countryCode: defaults.countryCode,
-            name: defaults.countryCode,
-          }
+          ) ??
+            data.find((item) => item.countryCode === "US") ??
+            data[0] ?? {
+              countryCode: defaults.countryCode,
+              name: defaults.countryCode,
+            }
         );
       })
       .catch(() => {
+        if (controller.signal.aborted) {
+          return;
+        }
+
         setCountry({
           countryCode: defaults.countryCode,
           name: defaults.countryCode,
         });
       })
-      .finally(() => setCountriesLoading(false));
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setCountriesLoading(false);
+        }
+      });
+
+    return () => controller.abort();
   }, []);
 
-  const selectedCountryCode = country?.countryCode ?? defaults.countryCode;
+  const selectedCountryCode = country.countryCode;
+  const queryKey = `${selectedCountryCode}-${year}`;
+  const availableYears = useMemo(buildYearOptions, []);
+  const holidays = useMemo(
+    () => filterHolidaysByMonth(yearHolidays, month),
+    [month, yearHolidays]
+  );
+  const loading = isFetchingHolidays || settledQueryKey !== queryKey;
+  const holidaysReady = !loading && !error;
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
-    setLoading(true);
+    setIsFetchingHolidays(true);
     setError(null);
+    setYearHolidays([]);
 
-    getHolidaysForYear({ year, countryCode: selectedCountryCode })
+    getHolidaysForYear(
+      { year, countryCode: selectedCountryCode },
+      controller.signal
+    )
       .then((data) => {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setYearHolidays(data);
-          setHolidays(filterHolidaysByMonth(data, month));
         }
       })
       .catch((err) => {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setError(err instanceof Error ? err.message : copy.unknownError);
         }
       })
       .finally(() => {
-        if (!cancelled) {
-          setLoading(false);
+        if (!controller.signal.aborted) {
+          setSettledQueryKey(queryKey);
+          setIsFetchingHolidays(false);
         }
       });
 
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedCountryCode, year]);
+    return () => controller.abort();
+  }, [queryKey, selectedCountryCode, year]);
 
-  useEffect(() => {
-    setHolidays(filterHolidaysByMonth(yearHolidays, month));
-  }, [month, yearHolidays]);
-
+  /** Actualiza el mes activo y cierra su selector. */
   const selectMonth = (value: number) => {
     setMonth(value);
     monthSheet.dismiss();
   };
 
+  /** Actualiza el año activo y cierra su selector. */
   const selectYear = (value: number) => {
     setYear(value);
     yearSheet.dismiss();
   };
 
+  /** Actualiza el país activo y cierra su selector. */
   const selectCountry = (countryCode: string) => {
     const selectedCountry = countries.find(
       (item) => item.countryCode === countryCode
@@ -135,6 +160,7 @@ export function useHolidaysScreen() {
     holidays,
     availableYears,
     loading,
+    holidaysReady,
     error,
     countrySheet,
     monthSheet,

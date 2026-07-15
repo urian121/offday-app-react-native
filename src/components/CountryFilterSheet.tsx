@@ -1,15 +1,18 @@
 import getCountryFlag from "country-flag-icons/unicode";
-import { useCallback, useMemo, useState, type RefObject } from "react";
+import { useMemo, useState, type RefObject } from "react";
 import { Pressable, Text, View } from "react-native";
 import {
-  BottomSheetBackdrop,
   BottomSheetFlatList,
   BottomSheetModal,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import type { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import type { Country } from "../interface/country";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
+import {
+  FILTER_SHEET_BACKGROUND_STYLE,
+  FILTER_SHEET_HANDLE_STYLE,
+  FilterSheetBackdrop,
+} from "./FilterSheetBackdrop";
 
 type CountryFilterSheetProps = {
   sheetRef: RefObject<BottomSheetModal | null>;
@@ -22,8 +25,7 @@ type CountryFilterSheetProps = {
   onSelect: (countryCode: string) => void;
 };
 
-const SHEET_STYLE = { backgroundColor: "#F7F5F1" } as const;
-const HANDLE_STYLE = { backgroundColor: "#C4B8A8" } as const;
+const COUNTRY_SHEET_SNAP_POINTS = ["75%"];
 const SEARCH_STYLE = {
   marginHorizontal: 24,
   marginBottom: 14,
@@ -35,6 +37,7 @@ const SEARCH_STYLE = {
   paddingVertical: 12,
 } as const;
 
+/** Renderiza el selector buscable de países soportados. */
 export function CountryFilterSheet({
   sheetRef,
   visible,
@@ -46,7 +49,6 @@ export function CountryFilterSheet({
   onSelect,
 }: CountryFilterSheetProps) {
   const [query, setQuery] = useState("");
-  const snapPoints = useMemo(() => ["75%"], []);
 
   const filteredCountries = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase();
@@ -62,17 +64,11 @@ export function CountryFilterSheet({
     );
   }, [countries, query]);
 
-  const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-        opacity={0.3}
-      />
-    ),
-    []
-  );
+  /** Limpia la búsqueda para que cada apertura empiece con la lista completa. */
+  const handleDismiss = () => {
+    setQuery("");
+    onDismiss();
+  };
 
   if (!visible) {
     return null;
@@ -81,13 +77,13 @@ export function CountryFilterSheet({
   return (
     <BottomSheetModal
       ref={sheetRef}
-      snapPoints={snapPoints}
-      backdropComponent={renderBackdrop}
-      backgroundStyle={SHEET_STYLE}
-      handleIndicatorStyle={HANDLE_STYLE}
+      snapPoints={COUNTRY_SHEET_SNAP_POINTS}
+      backdropComponent={FilterSheetBackdrop}
+      backgroundStyle={FILTER_SHEET_BACKGROUND_STYLE}
+      handleIndicatorStyle={FILTER_SHEET_HANDLE_STYLE}
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
-      onDismiss={onDismiss}
+      onDismiss={handleDismiss}
     >
       <Text className="px-6 pb-4 text-xs font-medium uppercase tracking-[2px] text-brand-muted">
         {copy.selectCountry}

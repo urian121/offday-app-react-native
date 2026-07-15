@@ -16,6 +16,11 @@ export interface Holiday {
   holidayTypes: HolidayType[];
 }
 
+export interface HolidayLocalNameSource {
+  date: string;
+  localName: string;
+}
+
 export interface HolidayQueryParams {
   countryCode: string;
   year: number;

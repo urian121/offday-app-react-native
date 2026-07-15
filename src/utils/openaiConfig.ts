@@ -1,3 +1,4 @@
+/** Lee la configuración pública usada por el cliente de OpenAI. */
 export function getOpenAIConfig() {
   return {
     apiKey: process.env.EXPO_PUBLIC_OPENAI_API_KEY?.trim() ?? "",

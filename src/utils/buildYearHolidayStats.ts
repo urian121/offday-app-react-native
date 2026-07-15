@@ -1,8 +1,10 @@
 import { Holiday } from "../interface/holiday";
 import { YearHolidayStats } from "../interface/monthInsight";
 import { formatMonthName } from "./dateFormat";
+import { filterHolidaysByMonth } from "./holidayDate";
 import { getHolidayDisplayName } from "./getHolidayDisplayName";
 
+/** Resume todos los festivos de un año para generar el insight mensual. */
 export function buildYearHolidayStats(
   holidays: Holiday[],
   countryCode: string,
@@ -11,10 +13,7 @@ export function buildYearHolidayStats(
 ): YearHolidayStats {
   const months = Array.from({ length: 12 }, (_, index) => {
     const month = index + 1;
-    const monthHolidays = holidays.filter((holiday) => {
-      const [, monthStr] = holiday.date.split("-");
-      return Number(monthStr) === month;
-    });
+    const monthHolidays = filterHolidaysByMonth(holidays, month);
 
     return {
       month,

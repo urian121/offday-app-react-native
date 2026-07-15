@@ -8,11 +8,25 @@ import {
 import { getOpenAIConfig } from "../utils/openaiConfig";
 
 const insightCache = new Map<string, string>();
+const INSIGHT_PROMPT_VERSION = "v1";
 
-function getCacheKey(stats: YearHolidayStats, locale: string): string {
-  return `${stats.countryCode}-${stats.year}-${stats.selectedMonth}-${locale}`;
+/** Construye una clave que invalida caché al cambiar modelo o prompt. */
+function getCacheKey(
+  stats: YearHolidayStats,
+  locale: string,
+  model: string
+): string {
+  return [
+    stats.countryCode,
+    stats.year,
+    stats.selectedMonth,
+    locale,
+    model,
+    INSIGHT_PROMPT_VERSION,
+  ].join("-");
 }
 
+/** Construye instrucciones para responder en el idioma del dispositivo. */
 function buildSystemPrompt(locale: string, languageCode: string): string {
   const languageName = getLanguageDisplayName(languageCode, locale);
 
@@ -29,8 +43,10 @@ function buildSystemPrompt(locale: string, languageCode: string): string {
   ].join(" ");
 }
 
+/** Genera y cachea el dato curioso del mes mediante OpenAI. */
 export async function generateMonthInsight(
-  stats: YearHolidayStats
+  stats: YearHolidayStats,
+  signal?: AbortSignal
 ): Promise<string> {
   const { apiKey, model } = getOpenAIConfig();
 
@@ -40,7 +56,7 @@ export async function generateMonthInsight(
 
   const locale = getDeviceLocale();
   const languageCode = getDeviceLanguageCode();
-  const cacheKey = getCacheKey(stats, locale);
+  const cacheKey = getCacheKey(stats, locale, model);
   const cached = insightCache.get(cacheKey);
 
   if (cached) {
@@ -52,22 +68,25 @@ export async function generateMonthInsight(
     dangerouslyAllowBrowser: true,
   });
 
-  const response = await openai.chat.completions.create({
-    model,
-    temperature: 0.7,
-    max_tokens: 180,
-    messages: [
-      { role: "system", content: buildSystemPrompt(locale, languageCode) },
-      {
-        role: "user",
-        content: JSON.stringify({
-          ...stats,
-          deviceLocale: locale,
-          responseLanguage: languageCode,
-        }),
-      },
-    ],
-  });
+  const response = await openai.chat.completions.create(
+    {
+      model,
+      temperature: 0.7,
+      max_tokens: 180,
+      messages: [
+        { role: "system", content: buildSystemPrompt(locale, languageCode) },
+        {
+          role: "user",
+          content: JSON.stringify({
+            ...stats,
+            deviceLocale: locale,
+            responseLanguage: languageCode,
+          }),
+        },
+      ],
+    },
+    { signal }
+  );
 
   const insight = response.choices[0]?.message?.content?.trim();
 

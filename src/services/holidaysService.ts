@@ -1,4 +1,8 @@
-import { Holiday, HolidayQueryParams } from "../interface/holiday";
+import {
+  Holiday,
+  HolidayLocalNameSource,
+  HolidayQueryParams,
+} from "../interface/holiday";
 import { getDefaultHolidayQueryParams } from "../utils/getDefaultHolidayQueryParams";
 
 const V4_BASE_URL = "https://date.nager.at/api/v4/Holidays";
@@ -6,24 +10,14 @@ const V3_BASE_URL = "https://date.nager.at/api/v3/PublicHolidays";
 
 const localNamesCache = new Map<string, Map<string, string>>();
 
-type HolidayV3 = {
-  date: string;
-  localName: string;
-};
-
-function filterByMonth(holidays: Holiday[], month: number): Holiday[] {
-  return holidays.filter((holiday) => {
-    const [, monthStr] = holiday.date.split("-");
-    return Number(monthStr) === month;
-  });
-}
-
+/** Obtiene el calendario anual canónico desde Nager.Date v4. */
 async function fetchV4YearHolidays(
   countryCode: string,
-  year: number
+  year: number,
+  signal?: AbortSignal
 ): Promise<Holiday[]> {
   const url = `${V4_BASE_URL}/${countryCode.toUpperCase()}/${year}`;
-  const response = await fetch(url);
+  const response = await fetch(url, { signal });
 
   if (!response.ok) {
     throw new Error(`Error al obtener festivos: ${response.status}`);
@@ -32,9 +26,11 @@ async function fetchV4YearHolidays(
   return response.json();
 }
 
+/** Obtiene y cachea nombres locales de v3 sin bloquear los datos v4. */
 async function fetchLocalNamesMap(
   countryCode: string,
-  year: number
+  year: number,
+  signal?: AbortSignal
 ): Promise<Map<string, string>> {
   const code = countryCode.toUpperCase();
   const cacheKey = `${code}-${year}`;
@@ -46,13 +42,13 @@ async function fetchLocalNamesMap(
 
   try {
     const url = `${V3_BASE_URL}/${year}/${code}`;
-    const response = await fetch(url);
+    const response = await fetch(url, { signal });
 
     if (!response.ok) {
       return new Map();
     }
 
-    const data: HolidayV3[] = await response.json();
+    const data: HolidayLocalNameSource[] = await response.json();
     const localNames = new Map(
       data.map((holiday) => [holiday.date, holiday.localName])
     );
@@ -64,15 +60,17 @@ async function fetchLocalNamesMap(
   }
 }
 
+/** Enriquece los festivos v4 con nombres locales de v3, unidos por fecha. */
 async function fetchYearHolidays(
   countryCode: string,
-  year: number
+  year: number,
+  signal?: AbortSignal
 ): Promise<Holiday[]> {
   const code = countryCode.toUpperCase();
 
   const [v4Holidays, localNames] = await Promise.all([
-    fetchV4YearHolidays(code, year),
-    fetchLocalNamesMap(code, year),
+    fetchV4YearHolidays(code, year, signal),
+    fetchLocalNamesMap(code, year, signal),
   ]);
 
   return v4Holidays.map((holiday) => ({
@@ -81,25 +79,15 @@ async function fetchYearHolidays(
   }));
 }
 
+/** Devuelve todos los festivos de un país y año con su nombre local opcional. */
 export async function getHolidaysForYear(
-  params: Partial<Pick<HolidayQueryParams, "countryCode" | "year">> = {}
+  params: Partial<Pick<HolidayQueryParams, "countryCode" | "year">> = {},
+  signal?: AbortSignal
 ): Promise<Holiday[]> {
   const { countryCode, year } = {
     ...getDefaultHolidayQueryParams(),
     ...params,
   };
 
-  return fetchYearHolidays(countryCode, year);
-}
-
-export async function getHolidays(
-  params: Partial<HolidayQueryParams> = {}
-): Promise<Holiday[]> {
-  const { countryCode, year, month } = {
-    ...getDefaultHolidayQueryParams(),
-    ...params,
-  };
-
-  const data = await fetchYearHolidays(countryCode, year);
-  return filterByMonth(data, month);
+  return fetchYearHolidays(countryCode, year, signal);
 }

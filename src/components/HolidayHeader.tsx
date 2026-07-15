@@ -1,7 +1,7 @@
 import getCountryFlag from "country-flag-icons/unicode";
 import { Image, Pressable, Text, View } from "react-native";
 import type { Country } from "../interface/country";
-import { formatMonthName } from "../utils/dateFormat";
+import { formatCurrentDate, formatMonthName } from "../utils/dateFormat";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 
 type HolidayHeaderProps = {
@@ -14,6 +14,7 @@ type HolidayHeaderProps = {
   onCountryPress: () => void;
 };
 
+/** Muestra marca, país activo, periodo y conteos de festivos. */
 export function HolidayHeader({
   month,
   year,
@@ -40,7 +41,7 @@ export function HolidayHeader({
 
         <Pressable
           onPress={onCountryPress}
-          className="max-w-[44%] flex-row items-center gap-2 rounded-xl bg-white/40 px-3 py-2 active:opacity-70"
+          className="max-w-[44%] flex-row items-center gap-1.5 rounded-xl px-3 py-2 active:opacity-70"
           accessibilityRole="button"
           accessibilityLabel={country?.name ?? copy.selectCountry}
         >
@@ -53,9 +54,9 @@ export function HolidayHeader({
             </Text>
           ) : null}
 
-          <View className="min-w-0 flex-1 items-end">
+          <View className="min-w-0 shrink">
             <Text
-              className="text-right text-sm font-medium text-brand-ink"
+              className="text-base font-medium text-brand-ink"
               numberOfLines={1}
             >
               {country?.name ?? country?.countryCode.toUpperCase()}
@@ -64,7 +65,11 @@ export function HolidayHeader({
         </Pressable>
       </View>
 
-      <View className="mt-5 flex-row items-end gap-3">
+      <Text className="text-lg font-medium text-brand-ink/75">
+        {formatCurrentDate()}
+      </Text>
+
+      <View className="mt-2 flex-row items-end gap-3">
         <Text className="mb-1 capitalize text-[34px] mr-3 leading-[36px] text-brand-ink">
           {formatMonthName(month)}
         </Text>
@@ -73,10 +78,10 @@ export function HolidayHeader({
         </Text>
       </View>
 
-      <Text className="mt-2 text-lg font-medium text-brand-ink">
+      <Text className="mt-2 text-xl font-medium text-brand-ink">
         {copy.holidaysThisMonth(holidayCount)}
       </Text>
-      <Text className="mt-1 text-base font-medium text-brand-ink/85">
+      <Text className="mt-1 text-lg font-medium text-brand-ink/85">
         {copy.holidaysThisYear(yearHolidayCount, year)}
       </Text>
     </View>

@@ -1,19 +1,24 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { ActivityIndicator, Image, Text, View } from "react-native";
+import {
+  APP_GRADIENT_COLORS,
+  APP_GRADIENT_LOCATIONS,
+} from "../utils/appGradient";
 import { getAppCopy } from "../utils/getAppCopy";
 
 type AppLoadingScreenProps = {
   onLayout?: () => void;
 };
 
+/** Muestra el estado de carga inicial mientras se obtienen los festivos. */
 export function AppLoadingScreen({ onLayout }: AppLoadingScreenProps) {
   const copy = getAppCopy();
 
   return (
     <View className="absolute inset-0 z-50" onLayout={onLayout}>
       <LinearGradient
-        colors={["#DAA428", "#E9C980", "#F3DEB1", "#FFFFFF"]}
-        locations={[0, 0.15, 0.45, 1]}
+        colors={APP_GRADIENT_COLORS}
+        locations={APP_GRADIENT_LOCATIONS}
         className="flex-1 items-center justify-center px-8"
       >
         <Image

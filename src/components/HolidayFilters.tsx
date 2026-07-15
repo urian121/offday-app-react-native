@@ -10,6 +10,7 @@ type HolidayFiltersProps = {
   onYearPress: () => void;
 };
 
+/** Renderiza una mitad interactiva del selector de mes y año. */
 function FilterSegment({
   label,
   value,
@@ -36,6 +37,7 @@ function FilterSegment({
   );
 }
 
+/** Agrupa los accesos a los selectores de mes y año. */
 export function HolidayFilters({
   month,
   year,

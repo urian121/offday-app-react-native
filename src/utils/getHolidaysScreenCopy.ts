@@ -18,7 +18,6 @@ const COPY = {
     noCountries: "No se encontraron países.",
     selectMonth: "Seleccionar mes",
     selectYear: "Seleccionar año",
-    loadingYears: "Cargando años...",
     insightTitle: "Dato del mes",
     insightLoading: "Generando dato curioso...",
     insightError: "No se pudo generar el dato curioso.",
@@ -50,7 +49,6 @@ const COPY = {
     noCountries: "No countries found.",
     selectMonth: "Select month",
     selectYear: "Select year",
-    loadingYears: "Loading years...",
     insightTitle: "Month insight",
     insightLoading: "Generating a curious fact...",
     insightError: "Could not generate the month insight.",
@@ -67,6 +65,7 @@ const COPY = {
   },
 } as const;
 
+/** Selecciona los textos de pantalla según el idioma del dispositivo. */
 export function getHolidaysScreenCopy() {
   const locale = getDeviceLocale();
   return locale.startsWith("es") ? COPY.es : COPY.en;

@@ -12,6 +12,7 @@ type UseMonthInsightParams = {
   holidaysError: string | null;
 };
 
+/** Genera el insight únicamente cuando los festivos corresponden al filtro activo. */
 export function useMonthInsight({
   month,
   year,
@@ -32,7 +33,7 @@ export function useMonthInsight({
       return;
     }
 
-    let cancelled = false;
+    const controller = new AbortController();
     setLoading(true);
     setError(null);
     setInsight(null);
@@ -44,27 +45,25 @@ export function useMonthInsight({
       month
     );
 
-    generateMonthInsight(stats)
+    generateMonthInsight(stats, controller.signal)
       .then((text) => {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setInsight(text);
         }
       })
       .catch((err) => {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           const code = err instanceof Error ? err.message : "UNKNOWN";
           setError(code);
         }
       })
       .finally(() => {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setLoading(false);
         }
       });
 
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, [
     month,
     year,

@@ -5,12 +5,15 @@ const AVAILABLE_COUNTRIES_URL =
 
 let countriesCache: Country[] | null = null;
 
-export async function getAvailableCountries(): Promise<Country[]> {
+/** Obtiene y cachea la lista de países soportados por Nager.Date. */
+export async function getAvailableCountries(
+  signal?: AbortSignal
+): Promise<Country[]> {
   if (countriesCache) {
     return countriesCache;
   }
 
-  const response = await fetch(AVAILABLE_COUNTRIES_URL);
+  const response = await fetch(AVAILABLE_COUNTRIES_URL, { signal });
 
   if (!response.ok) {
     throw new Error(`Error al obtener países: ${response.status}`);
@@ -19,13 +22,4 @@ export async function getAvailableCountries(): Promise<Country[]> {
   const countries: Country[] = await response.json();
   countriesCache = countries;
   return countries;
-}
-
-export async function getCountryByCode(
-  countryCode: string
-): Promise<Country | null> {
-  const code = countryCode.toUpperCase();
-  const countries = await getAvailableCountries();
-
-  return countries.find((country) => country.countryCode === code) ?? null;
 }

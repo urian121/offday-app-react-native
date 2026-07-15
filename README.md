@@ -1,23 +1,65 @@
-- consumir una API externa
-- definir la interfaz de acuerdo a los datos y tipo de datos que devuelve la api
-- lee la configuración regional del teléfono (idioma + región configurados por el usuario en su sistema) con expo-localization
+# OffDay
 
+Aplicación móvil Expo + React Native que muestra días festivos por país, mes y año.
 
----
+## Desarrollo
 
-## Nota: nombres de festivos (v4 + v3)
+```bash
+npm install
+npm start
+npm run typecheck
+```
 
-La app usa un enfoque **híbrido** con [Nager.Date](https://date.nager.at/):
+Para iniciar Metro escuchando solo en localhost:
 
-- **API v4** (`/api/v4/Holidays/{CountryCode}/{Year}`) — fuente principal: fechas, tipos (`holidayTypes`), nacional/regional (`nationalHoliday`, `subdivisionCodes`).
-- **API v3** (`/api/v3/PublicHolidays/{Year}/{CountryCode}`) — solo para obtener `localName` (nombre en el idioma nativo del país).
+```bash
+npx expo start --clear --localhost
+```
 
-Los datos se fusionan por `date`. Si v3 falla, se muestra `name` en inglés.
+## Estructura
 
-**Qué nombre se muestra en la UI** (`getHolidayDisplayName`):
+- `src/components/`: composición visual, listas y bottom sheets.
+- `src/hooks/`: estado y coordinación de solicitudes.
+- `src/services/`: Nager.Date y OpenAI.
+- `src/interface/`: contratos compartidos.
+- `src/utils/`: locale, fechas, copies y transformaciones puras.
 
-- Teléfono en **inglés** → `name` (inglés).
-- Teléfono en **otro idioma** + `localName` disponible → `localName` (español en CO/MX, alemán en AT, etc.).
-- Sin `localName` → fallback a `name`.
+## Datos de festivos
 
-`localName` refleja el idioma del **país**, no el del teléfono. v3 y v4 pueden diferir en algunas fechas; por eso v4 manda en calendario y v3 solo aporta el nombre local.
+La app usa un enfoque híbrido con [Nager.Date](https://date.nager.at/):
+
+- **v4** (`/api/v4/Holidays/{CountryCode}/{Year}`): fuente canónica de fechas, tipos y alcance nacional/regional.
+- **v3** (`/api/v3/PublicHolidays/{Year}/{CountryCode}`): aporta únicamente `localName`.
+- **v3** (`/api/v3/AvailableCountries`): lista los países disponibles.
+
+Los nombres v3 se unen a v4 por `date`. Si v3 falla o las fechas no coinciden, se conserva el nombre inglés de v4. El filtrado mensual ocurre en el cliente.
+
+### Nombre mostrado
+
+- Teléfono en inglés: `name`.
+- Otro idioma con `localName` disponible: `localName`.
+- Sin `localName`: fallback a `name`.
+
+`localName` corresponde al idioma nativo del país seleccionado, no necesariamente al idioma del teléfono.
+
+## Insight mensual con OpenAI
+
+El insight compara el mes activo con todos los meses del mismo año y se cachea en memoria por país, año, mes, locale, modelo y versión del prompt.
+
+Variables requeridas:
+
+```env
+EXPO_PUBLIC_OPENAI_API_KEY=
+EXPO_PUBLIC_OPENAI_MODEL=gpt-4o-mini
+```
+
+> `EXPO_PUBLIC_OPENAI_API_KEY` queda incluida en el bundle móvil. Antes de producción, la llamada debe trasladarse a un backend o función serverless que proteja la clave y aplique límites.
+
+Como mejora futura, el insight puede persistirse en una base de datos para reutilizar respuestas y reducir costes.
+
+npx expo start --clear
+npx expo start --clear --localhost
+npx expo start --android
+npx expo run:android
+npx expo-doctor o npx expo doctor
+npx eas build --platform android --profile preview --local

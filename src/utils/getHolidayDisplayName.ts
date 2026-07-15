@@ -1,6 +1,7 @@
 import { Holiday } from "../interface/holiday";
 import { getDeviceLanguageCode } from "./getDeviceLocale";
 
+/** Elige entre el nombre inglés y el nombre local según el idioma del teléfono. */
 export function getHolidayDisplayName(holiday: Holiday): string {
   const languageCode = getDeviceLanguageCode();
 

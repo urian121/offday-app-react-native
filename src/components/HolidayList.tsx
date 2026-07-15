@@ -24,7 +24,18 @@ type HolidayListProps = {
 
 const STAGGER_MS = 75;
 const ENTER_DURATION = 320;
+const CHIP_STYLES = {
+  accent: "bg-brand-accent-soft/60",
+  muted: "bg-brand-surface/90",
+  neutral: "bg-white/70",
+} as const;
+const CHIP_TEXT_STYLES = {
+  accent: "text-brand-accent",
+  muted: "text-brand-ink",
+  neutral: "text-brand-muted",
+} as const;
 
+/** Renderiza una etiqueta compacta de alcance o tipo de festivo. */
 function MetaChip({
   label,
   variant,
@@ -32,25 +43,18 @@ function MetaChip({
   label: string;
   variant: "accent" | "muted" | "neutral";
 }) {
-  const styles = {
-    accent: "bg-brand-accent-soft/60",
-    muted: "bg-brand-surface/90",
-    neutral: "bg-white/70",
-  } as const;
-
-  const textStyles = {
-    accent: "text-brand-accent",
-    muted: "text-brand-ink",
-    neutral: "text-brand-muted",
-  } as const;
-
   return (
-    <View className={`rounded-md px-2 py-0.5 ${styles[variant]}`}>
-      <Text className={`text-[11px] ${textStyles[variant]}`}>{label}</Text>
+    <View className={`rounded-md px-2.5 py-1 ${CHIP_STYLES[variant]}`}>
+      <Text
+        className={`text-[13px] font-medium ${CHIP_TEXT_STYLES[variant]}`}
+      >
+        {label}
+      </Text>
     </View>
   );
 }
 
+/** Presenta fecha, nombre, alcance, tipos y subdivisiones de un festivo. */
 function HolidayCard({
   holiday,
   copy,
@@ -65,17 +69,17 @@ function HolidayCard({
 
   return (
     <View className="flex-row gap-4 rounded-2xl bg-white/50 px-4 py-4">
-      <View className="w-12 items-center rounded-xl bg-brand-surface/80 py-2">
-        <Text className="text-lg font-medium text-brand-ink">
+      <View className="w-14 items-center rounded-xl bg-brand-surface/80 py-2.5">
+        <Text className="text-2xl font-semibold text-brand-ink">
           {formatHolidayDay(holiday.date)}
         </Text>
-        <Text className="mt-0.5 text-[10px] uppercase tracking-wide text-brand-muted">
+        <Text className="mt-0.5 text-[11px] uppercase tracking-wide text-brand-muted">
           {formatWeekdayShort(holiday.date)}
         </Text>
       </View>
 
       <View className="flex-1 justify-center">
-        <Text className="text-[15px] leading-5 text-brand-ink">
+        <Text className="text-[17px] font-medium leading-6 text-brand-ink">
           {getHolidayDisplayName(holiday)}
         </Text>
 
@@ -103,6 +107,7 @@ function HolidayCard({
   );
 }
 
+/** Añade la animación escalonada de entrada a cada tarjeta. */
 function AnimatedHolidayItem({
   holiday,
   index,
@@ -126,6 +131,18 @@ function AnimatedHolidayItem({
   );
 }
 
+/** Construye una clave estable incluso para festivos regionales coincidentes. */
+function getHolidayKey(holiday: Holiday): string {
+  return [
+    holiday.countryCode,
+    holiday.date,
+    holiday.name,
+    holiday.subdivisionCodes?.join(",") ?? "national",
+    holiday.holidayTypes.join(","),
+  ].join("-");
+}
+
+/** Renderiza estados de carga/error y la lista mensual con su insight. */
 export function HolidayList({
   holidays,
   loading,
@@ -152,6 +169,15 @@ export function HolidayList({
     );
   }
 
+  const insightContent = (
+    <MonthInsight
+      insight={insight}
+      loading={insightLoading}
+      error={insightError}
+      copy={copy}
+    />
+  );
+
   if (holidays.length === 0) {
     return (
       <View>
@@ -160,12 +186,7 @@ export function HolidayList({
             {copy.noHolidays}
           </Text>
         </View>
-        <MonthInsight
-          insight={insight}
-          loading={insightLoading}
-          error={insightError}
-          copy={copy}
-        />
+        {insightContent}
       </View>
     );
   }
@@ -174,17 +195,10 @@ export function HolidayList({
     <FlatList
       key={listKey}
       data={holidays}
-      keyExtractor={(item) => item.date + item.name}
+      keyExtractor={getHolidayKey}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 32 }}
-      ListFooterComponent={
-        <MonthInsight
-          insight={insight}
-          loading={insightLoading}
-          error={insightError}
-          copy={copy}
-        />
-      }
+      ListFooterComponent={insightContent}
       renderItem={({ item, index }) => (
         <AnimatedHolidayItem holiday={item} index={index} copy={copy} />
       )}

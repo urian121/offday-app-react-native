@@ -1,6 +1,7 @@
 import type { Holiday, HolidayType } from "../interface/holiday";
 import type { getHolidaysScreenCopy } from "./getHolidaysScreenCopy";
 
+/** Resume códigos regionales y marca cuántos quedaron ocultos. */
 export function formatSubdivisionCodes(
   codes: string[] | null,
   maxVisible = 3
@@ -17,6 +18,7 @@ export function formatSubdivisionCodes(
   return `${visible} +${codes.length - maxVisible}`;
 }
 
+/** Traduce un tipo de festivo usando el copy activo de la pantalla. */
 export function getHolidayTypeLabel(
   type: HolidayType,
   copy: ReturnType<typeof getHolidaysScreenCopy>
@@ -24,6 +26,7 @@ export function getHolidayTypeLabel(
   return copy.holidayTypeLabels[type] ?? type;
 }
 
+/** Indica si un festivo aplica solo a una o varias subdivisiones. */
 export function isRegionalHoliday(holiday: Holiday): boolean {
   return !holiday.nationalHoliday;
 }

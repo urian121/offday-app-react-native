@@ -3,15 +3,14 @@ import { useCallback } from "react";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
+/** Sustituye el splash nativo por el overlay hasta completar la carga inicial. */
 export function useSplashScreen(isContentReady: boolean) {
+  /** Oculta el splash nativo cuando el overlay de React ya está dibujado. */
   const onLoadingScreenLayout = useCallback(() => {
     SplashScreen.hideAsync();
   }, []);
 
-  const onLayoutRootView = useCallback(() => {}, []);
-
   return {
-    onLayoutRootView,
     onLoadingScreenLayout,
     showLoadingOverlay: !isContentReady,
   };

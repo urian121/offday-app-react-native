@@ -27,6 +27,12 @@ No hay parámetro de mes en la API. El filtrado por mes se hace **en el cliente*
 ### Años disponibles
 La API v4 no expone un endpoint de años disponibles. El selector de año usa una lista local generada en `useHolidaysScreen` (año actual −1 hasta año actual +5), sin consultar la API.
 
+### Endpoints auxiliares v3
+- `GET /api/v3/PublicHolidays/{Year}/{CountryCode}`: solo aporta `localName`.
+- `GET /api/v3/AvailableCountries`: lista los países soportados.
+
+La fecha, alcance y tipos siempre provienen de v4. Los datos v3 nunca sustituyen el calendario v4.
+
 ### Modelo de respuesta (`Holiday[]`)
 ```json
 {
@@ -49,8 +55,8 @@ La API v4 no expone un endpoint de años disponibles. El selector de año usa un
 | `holidayTypes`     | string[]          | Tipos: `Public`, `Bank`, `School`, `Authorities`, `Optional`, `Observance` |
 
 ### Reglas para el agente
-- Usar **exclusivamente** esta API para datos de festivos; no inventar endpoints ni campos.
-- La interfaz `Holiday` vive en `src/interface/holiday.ts` — mantenerla alineada con la respuesta real de la API.
+- Usar exclusivamente los endpoints Nager.Date documentados arriba; no inventar endpoints ni campos.
+- La interfaz `Holiday` vive en `src/interface/holiday.ts`: contiene el modelo v4 enriquecido con `localName` opcional de v3.
 - `CountryCode` debe ir en mayúsculas (ISO alpha-2).
 - La API no tiene rate limits ni requiere API key.
 - Ante dudas sobre campos o valores posibles, verificar en https://date.nager.at/Api o probar el endpoint directamente.

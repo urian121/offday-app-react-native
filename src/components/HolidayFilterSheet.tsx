@@ -1,11 +1,11 @@
-import { useCallback, useMemo, type RefObject } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import type { RefObject } from "react";
+import { Pressable, Text } from "react-native";
+import { BottomSheetFlatList, BottomSheetModal } from "@gorhom/bottom-sheet";
 import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
-import type { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
+  FILTER_SHEET_BACKGROUND_STYLE,
+  FILTER_SHEET_HANDLE_STYLE,
+  FilterSheetBackdrop,
+} from "./FilterSheetBackdrop";
 
 type FilterOption<T> = {
   value: T;
@@ -18,47 +18,24 @@ type HolidayFilterSheetProps<T> = {
   title: string;
   options: FilterOption<T>[];
   selected: T;
-  loading?: boolean;
-  loadingLabel?: string;
   capitalizeLabels?: boolean;
   onDismiss: () => void;
   onSelect: (value: T) => void;
 };
 
-const SHEET_STYLE = {
-  backgroundColor: "#F7F5F1",
-} as const;
+const FILTER_SHEET_SNAP_POINTS = ["45%"];
 
-const HANDLE_STYLE = {
-  backgroundColor: "#C4B8A8",
-} as const;
-
+/** Renderiza un selector desplazable reutilizable para meses y años. */
 export function HolidayFilterSheet<T extends string | number>({
   sheetRef,
   visible,
   title,
   options,
   selected,
-  loading = false,
-  loadingLabel,
   capitalizeLabels = false,
   onDismiss,
   onSelect,
 }: HolidayFilterSheetProps<T>) {
-  const snapPoints = useMemo(() => ["45%"], []);
-
-  const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-        opacity={0.3}
-      />
-    ),
-    []
-  );
-
   if (!visible) {
     return null;
   }
@@ -66,50 +43,44 @@ export function HolidayFilterSheet<T extends string | number>({
   return (
     <BottomSheetModal
       ref={sheetRef}
-      snapPoints={snapPoints}
-      backdropComponent={renderBackdrop}
-      backgroundStyle={SHEET_STYLE}
-      handleIndicatorStyle={HANDLE_STYLE}
+      snapPoints={FILTER_SHEET_SNAP_POINTS}
+      backdropComponent={FilterSheetBackdrop}
+      backgroundStyle={FILTER_SHEET_BACKGROUND_STYLE}
+      handleIndicatorStyle={FILTER_SHEET_HANDLE_STYLE}
       onDismiss={onDismiss}
     >
-      <BottomSheetView>
-        <Text className="px-6 pb-4 text-xs font-medium uppercase tracking-[2px] text-brand-muted">
-          {title}
-        </Text>
+      <BottomSheetFlatList
+        data={options}
+        keyExtractor={(option) => String(option.value)}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+        ListHeaderComponent={
+          <Text className="px-2 pb-4 text-xs font-medium uppercase tracking-[2px] text-brand-muted">
+            {title}
+          </Text>
+        }
+        renderItem={({ item: option }) => {
+          const isSelected = option.value === selected;
 
-        {loading ? (
-          <View className="items-center py-10">
-            <ActivityIndicator color="#7A7269" />
-            {loadingLabel ? (
-              <Text className="mt-3 text-sm text-brand-muted">{loadingLabel}</Text>
-            ) : null}
-          </View>
-        ) : (
-          options.map((option) => {
-            const isSelected = option.value === selected;
-
-            return (
-              <Pressable
-                key={String(option.value)}
-                onPress={() => onSelect(option.value)}
-                className={`mx-4 mb-1 rounded-xl px-4 py-3.5 active:opacity-75 ${
-                  isSelected ? "bg-brand-accent-soft/50" : "bg-transparent"
+          return (
+            <Pressable
+              onPress={() => onSelect(option.value)}
+              className={`mb-1 rounded-xl px-4 py-3.5 active:opacity-75 ${
+                isSelected ? "bg-brand-accent-soft/50" : "bg-transparent"
+              }`}
+            >
+              <Text
+                className={`text-base ${capitalizeLabels ? "capitalize " : ""}${
+                  isSelected
+                    ? "font-medium text-brand-ink"
+                    : "text-brand-muted"
                 }`}
               >
-                <Text
-                  className={`text-base ${capitalizeLabels ? "capitalize " : ""}${
-                    isSelected
-                      ? "font-medium text-brand-ink"
-                      : "text-brand-muted"
-                  }`}
-                >
-                  {option.label}
-                </Text>
-              </Pressable>
-            );
-          })
-        )}
-      </BottomSheetView>
+                {option.label}
+              </Text>
+            </Pressable>
+          );
+        }}
+      />
     </BottomSheetModal>
   );
 }
