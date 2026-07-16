@@ -1,6 +1,6 @@
 import getCountryFlag from "country-flag-icons/unicode";
 import { Pressable, Text, View } from "react-native";
-import Svg, { Circle, Path } from "react-native-svg";
+import { Ionicons } from "@react-native-vector-icons/ionicons";
 import type { Country } from "../interface/country";
 import { formatCurrentDate, formatMonthName } from "../utils/dateFormat";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
@@ -14,52 +14,6 @@ type HolidayHeaderProps = {
   copy: ReturnType<typeof getHolidaysScreenCopy>;
   onCountryPress: () => void;
 };
-
-/** Dibuja el calendario compacto que identifica a OffDay. */
-function BrandCalendarIcon() {
-  return (
-    <Svg
-      width={25}
-      height={25}
-      viewBox="0 0 24 24"
-      fill="none"
-      accessibilityRole="image"
-      accessibilityLabel="Logo de OffDay"
-    >
-      <Path
-        d="M6.5 3v3M17.5 3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"
-        stroke="#412402"
-        strokeWidth={1.8}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <Circle cx={12} cy={15} r={2.1} fill="#412402" />
-    </Svg>
-  );
-}
-
-/** Reproduce el control visual de ajustes incluido en el mockup. */
-function SettingsIcon() {
-  return (
-    <Svg
-      width={19}
-      height={19}
-      viewBox="0 0 24 24"
-      fill="none"
-      accessibilityRole="image"
-      accessibilityLabel="Ajustes"
-    >
-      <Circle cx={12} cy={12} r={3} stroke="#412402" strokeWidth={1.7} />
-      <Path
-        d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.09a1.7 1.7 0 0 0-1.1-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.1 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2.3v-4h.09A1.7 1.7 0 0 0 4 8.5a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 8.4 4.1a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2.3h4v.09A1.7 1.7 0 0 0 15 4a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 8.4a1.7 1.7 0 0 0 .6 1 1.7 1.7 0 0 0 1.1.4h.09v4h-.09A1.7 1.7 0 0 0 19.4 15Z"
-        stroke="#412402"
-        strokeWidth={1.35}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
 
 /** Muestra marca, país activo, periodo y conteos de festivos. */
 export function HolidayHeader({
@@ -76,7 +30,12 @@ export function HolidayHeader({
       <View className="flex-row items-center justify-between gap-3">
         <View className="flex-row items-center gap-2.5">
           <View className="h-12 w-12 items-center justify-center rounded-xl bg-brand-calendar-surface">
-            <BrandCalendarIcon />
+            <Ionicons
+              name="calendar"
+              size={22}
+              color="#412402"
+              accessibilityLabel="Logo de OffDay"
+            />
           </View>
           <Text className="text-[22px] font-semibold tracking-wide text-brand-ink">
             OffDay
@@ -110,7 +69,12 @@ export function HolidayHeader({
       </View>
 
       <View className="absolute right-0 top-14 h-10 w-10 items-center justify-center rounded-full bg-white/35">
-        <SettingsIcon />
+        <Ionicons
+          name="settings-outline"
+          size={18}
+          color="#412402"
+          accessibilityLabel="Ajustes"
+        />
       </View>
 
       <Text className="mt-11 text-[16px] font-medium text-brand-brown">

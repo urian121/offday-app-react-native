@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, View } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import { Ionicons } from "@react-native-vector-icons/ionicons";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 
 type MonthInsightProps = {
@@ -8,28 +8,6 @@ type MonthInsightProps = {
   error: string | null;
   copy: ReturnType<typeof getHolidaysScreenCopy>;
 };
-
-/** Dibuja un bombillo para identificar visualmente el dato curioso. */
-function LightbulbIcon() {
-  return (
-    <Svg
-      width={23}
-      height={23}
-      viewBox="0 0 24 24"
-      fill="none"
-      accessibilityRole="image"
-      accessibilityLabel="Dato curioso"
-    >
-      <Path
-        d="M9 18h6M10 22h4M15.09 14c.18-.66.66-1.18 1.11-1.66a6 6 0 1 0-8.4 0c.45.48.93 1 1.11 1.66Z"
-        stroke="#412402"
-        strokeWidth={1.8}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
 
 /** Traduce códigos técnicos del servicio de IA a mensajes para la interfaz. */
 function resolveErrorMessage(
@@ -74,7 +52,12 @@ export function MonthInsight({
           {copy.insightTitle}
         </Text>
         <View className="h-9 w-9 items-center justify-center rounded-[10px] bg-brand-calendar-surface">
-          <LightbulbIcon />
+          <Ionicons
+            name="bulb-outline"
+            size={20}
+            color="#412402"
+            accessibilityLabel="Dato curioso"
+          />
         </View>
       </View>
       <Text
