@@ -1,4 +1,6 @@
-require("dotenv").config();
+// quiet evita que dotenv imprima logs/tips en stdout, que de otro modo
+// contaminan la salida JSON que expo-doctor espera al validar dependencias.
+require("dotenv").config({ quiet: true });
 
 module.exports = {
   expo: {
@@ -31,6 +33,7 @@ module.exports = {
     },
     plugins: [
       "expo-localization",
+      "expo-status-bar",
       [
         "expo-splash-screen",
         {
