@@ -43,6 +43,16 @@ module.exports = {
           resizeMode: "contain",
         },
       ],
+      [
+        "expo-build-properties",
+        {
+          // x86/x86_64 solo son para emuladores; se excluyen para reducir
+          // el tamaño del APK/AAB en dispositivos físicos reales.
+          android: {
+            buildArchs: ["armeabi-v7a", "arm64-v8a"],
+          },
+        },
+      ],
     ],
     extra: {
       eas: {
