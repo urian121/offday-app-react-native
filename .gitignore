@@ -15,3 +15,8 @@ coverage/
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+
+offday/ios
+offday/android
+offday/build
+offday/.apk
