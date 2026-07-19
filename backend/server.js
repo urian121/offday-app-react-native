@@ -8,30 +8,7 @@ import { parseMonthInsightBody } from "./validateMonthInsight.js";
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
-const corsOrigins = (process.env.CORS_ORIGINS || "")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
-app.use(
-  cors({
-    origin(origin, callback) {
-      // Apps nativas / curl no envían Origin.
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      if (corsOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(null, false);
-    },
-    methods: ["POST"],
-    allowedHeaders: ["Content-Type"],
-  })
-);
-
+app.use(cors());
 app.use(express.json({ limit: "50kb" }));
 
 app.post("/api/month-insight", async (req, res) => {

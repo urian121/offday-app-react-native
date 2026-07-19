@@ -17,14 +17,11 @@ Copia `.env-example` a `.env`:
 
 ```env
 PORT=3000
-CORS_ORIGINS=
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4o-mini
 TURSO_DATABASE_URL=
 TURSO_AUTH_TOKEN=
 ```
-
-`CORS_ORIGINS` es una lista separada por comas. Las apps nativas no envían `Origin` y pasan igual; úsalo si consumes la API desde web.
 
 ## Endpoints
 
