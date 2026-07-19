@@ -1,6 +1,26 @@
 {
   "name": "offday",
   "version": "1.0.0",
+  "description": "A React Native mobile application built with Expo for managing days off, schedules, and productivity.",
+  "author": {
+    "name": "Urian Viera",
+    "email": "urianwebdeveloper@gmail.com",
+    "url": "https://github.com/urian121/offday-app-react-native"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "mobile",
+    "typescript",
+    "productivity",
+    "offday",
+    "Dias festivos"
+  ],
+  "homepage": "https://github.com/urian121/offday-app-react-native",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/urian121/offday-app-react-native.git"
+  },
   "main": "index.ts",
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.14",
@@ -17,7 +37,6 @@
     "expo-splash-screen": "~57.0.4",
     "expo-status-bar": "~57.0.1",
     "nativewind": "^4.2.6",
-    "openai": "^6.46.0",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "react": "19.2.3",
     "react-native": "0.86.0",

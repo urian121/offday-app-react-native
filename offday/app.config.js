@@ -50,6 +50,8 @@ module.exports = {
           // el tamaño del APK/AAB en dispositivos físicos reales.
           android: {
             buildArchs: ["armeabi-v7a", "arm64-v8a"],
+            // Permite llamar al backend local por HTTP durante desarrollo.
+            usesCleartextTraffic: true,
           },
         },
       ],
@@ -58,9 +60,8 @@ module.exports = {
       eas: {
         projectId: "df39925d-ccb0-4162-85a1-66397db65640",
       },
-      // Se embeben en el binario durante el build (EAS local/cloud).
-      openaiApiKey: process.env.EXPO_PUBLIC_OPENAI_API_KEY ?? "",
-      openaiModel: process.env.EXPO_PUBLIC_OPENAI_MODEL ?? "gpt-4o-mini",
+      // Se embebe en el binario durante el build (EAS local/cloud).
+      apiUrl: process.env.EXPO_PUBLIC_API_URL ?? "",
     },
   },
 };

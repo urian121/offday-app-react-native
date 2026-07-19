@@ -14,8 +14,8 @@ function resolveErrorMessage(
   error: string,
   copy: ReturnType<typeof getHolidaysScreenCopy>
 ): string {
-  if (error === "OPENAI_API_KEY_MISSING") {
-    return copy.insightMissingKey;
+  if (error === "API_URL_MISSING") {
+    return copy.insightMissingApiUrl;
   }
 
   return copy.insightError;

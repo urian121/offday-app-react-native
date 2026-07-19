@@ -24,8 +24,8 @@ const COPY = {
     insightTitle: "Dato del mes",
     insightLoading: "Generando dato curioso...",
     insightError: "No se pudo generar el dato curioso.",
-    insightMissingKey:
-      "Falta EXPO_PUBLIC_OPENAI_API_KEY en el build. Revisa tu .env y vuelve a generar el APK.",
+    insightMissingApiUrl:
+      "Falta EXPO_PUBLIC_API_URL en el build. Revisa tu .env y reinicia Expo.",
     holidayTypeLabels: {
       Public: "Público",
       Bank: "Bancario",
@@ -46,10 +46,10 @@ const COPY = {
     unknownError: "Unknown error",
     month: "Month",
     year: "Year",
-    selectCountry: "Select country",
-    searchCountry: "Search country or code",
-    loadingCountries: "Loading countries...",
-    noCountries: "No countries found.",
+    selectCountry: "Seleccionar país",
+    searchCountry: "Buscar país",
+    loadingCountries: "Cargando países...",
+    noCountries: "No se encontraron países.",
     selectMonth: "Select month",
     selectYear: "Select year",
     restPlanTitle: "Plan your time off",
@@ -57,8 +57,8 @@ const COPY = {
     insightTitle: "Month insight",
     insightLoading: "Generating a curious fact...",
     insightError: "Could not generate the month insight.",
-    insightMissingKey:
-      "EXPO_PUBLIC_OPENAI_API_KEY is missing from this build. Check your .env and rebuild the APK.",
+    insightMissingApiUrl:
+      "EXPO_PUBLIC_API_URL is missing from this build. Check your .env and restart Expo.",
     holidayTypeLabels: {
       Public: "Public",
       Bank: "Bank",

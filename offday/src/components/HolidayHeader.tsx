@@ -68,16 +68,7 @@ export function HolidayHeader({
         </Pressable>
       </View>
 
-      <View className="absolute right-0 top-14 h-10 w-10 items-center justify-center rounded-full bg-white/35">
-        <Ionicons
-          name="settings-outline"
-          size={18}
-          color="#412402"
-          accessibilityLabel="Ajustes"
-        />
-      </View>
-
-      <Text className="mt-11 text-[16px] font-medium text-brand-brown">
+      <Text className="mt-5 text-[16px] font-medium text-brand-brown">
         {copy.today} {formatCurrentDate()}
       </Text>
 

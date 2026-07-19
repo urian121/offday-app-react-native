@@ -20,7 +20,7 @@ npx expo start --clear --localhost
 
 - `src/components/`: composición visual, listas y bottom sheets.
 - `src/hooks/`: estado y coordinación de solicitudes.
-- `src/services/`: Nager.Date y OpenAI.
+- `src/services/`: Nager.Date y backend Offday.
 - `src/interface/`: contratos compartidos.
 - `src/utils/`: locale, fechas, copies y transformaciones puras.
 
@@ -42,34 +42,27 @@ Los nombres v3 se unen a v4 por `date`. Si v3 falla o las fechas no coinciden, s
 
 `localName` corresponde al idioma nativo del país seleccionado, no necesariamente al idioma del teléfono.
 
-## Insight mensual con OpenAI
+## Insight mensual
 
-El insight compara el mes activo con todos los meses del mismo año y se cachea en memoria por país, año, mes, locale, modelo y versión del prompt.
+El insight lo genera el backend (`POST /api/month-insight`) con OpenAI. La app solo envía las estadísticas del año y muestra la respuesta.
 
-Variables requeridas (archivo `.env` en la raíz):
+Variable requerida (archivo `.env` en la raíz de `offday/`):
 
 ```env
-EXPO_PUBLIC_OPENAI_API_KEY=
-EXPO_PUBLIC_OPENAI_MODEL=gpt-4o-mini
+EXPO_PUBLIC_API_URL=http://192.168.x.x:3000
 ```
 
-- Con `npx expo start`, Expo carga el `.env` automáticamente.
-- Con `eas build --local`, el `.env` se lee en `app.config.js` y la clave se embebe en `extra` del binario.
-- Con EAS en la nube, configura las mismas variables en el proyecto de Expo (Environment variables), porque el `.env` está en `.gitignore` y no se sube.
+- En dispositivo físico usa la IP local de tu máquina (no `localhost`).
+- Arranca el backend con `npm run dev` en `backend/` y asegúrate de tener `OPENAI_API_KEY` allí.
+- Con `eas build`, configura `EXPO_PUBLIC_API_URL` en el proyecto de Expo o en el `.env` local.
 
-Vuelve a generar el APK después de tener el `.env` listo:
+Comandos
 
 ```bash
-npx eas build --platform android --profile preview --local
-```
-
-> `EXPO_PUBLIC_OPENAI_API_KEY` queda incluida en el bundle móvil. Antes de producción, la llamada debe trasladarse a un backend o función serverless que proteja la clave y aplique límites.
-
-Como mejora futura, el insight puede persistirse en una base de datos para reutilizar respuestas y reducir costes.
-
 npx expo start --clear
 npx expo start --clear --localhost
 npx expo start --android
 npx expo run:android
 npx expo-doctor
 npx eas build --platform android --profile preview --local
+```
