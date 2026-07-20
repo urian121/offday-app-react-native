@@ -218,7 +218,8 @@ export function HolidayList({
       data={holidays}
       keyExtractor={getHolidayKey}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 32 }}
+      style={{ backgroundColor: "transparent" }}
+      contentContainerStyle={{ paddingBottom: 24 }}
       ListHeaderComponent={<HolidayListTitle title={copy.holidaysTitle} />}
       ListFooterComponent={listFooter}
       renderItem={({ item, index }) => (

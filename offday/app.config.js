@@ -27,6 +27,10 @@ module.exports = {
       backgroundColor: "#00000000",
       barStyle: "dark-content",
     },
+    androidNavigationBar: {
+      backgroundColor: "#FAEBD0",
+      barStyle: "dark-content",
+    },
     web: {
       favicon: "./assets/favicon.png",
       bundler: "metro",
@@ -34,6 +38,14 @@ module.exports = {
     plugins: [
       "expo-localization",
       "expo-status-bar",
+      [
+        "@sentry/react-native/expo",
+        {
+          url: "https://sentry.io/",
+          organization: "dev-5q",
+          project: "react-native",
+        },
+      ],
       [
         "expo-splash-screen",
         {
