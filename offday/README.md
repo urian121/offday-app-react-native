@@ -78,7 +78,7 @@ npx eas build --platform android --profile preview --local
 En la nube (sí lee las vars del dashboard de Expo):
 
 ```bash
-# AAB para Play Store
+# AAB para Play Store, Debes generar el AAB de producción, incluso si primero lo vas a publicar en una Prueba cerrada (Closed Testing).
 npx eas build --platform android --profile production
 
 # APK para prueba interna
