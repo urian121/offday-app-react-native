@@ -6,7 +6,7 @@ import {
   BottomSheetModal,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import type { Country } from "../interface/country";
+import type { Country } from "../interface";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 import {
   FILTER_SHEET_BACKGROUND_STYLE,

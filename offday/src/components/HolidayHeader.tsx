@@ -1,7 +1,7 @@
 import getCountryFlag from "country-flag-icons/unicode";
 import { Pressable, Text, View } from "react-native";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
-import type { Country } from "../interface/country";
+import type { Country } from "../interface";
 import { formatCurrentDate, formatMonthName } from "../utils/dateFormat";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 
@@ -68,21 +68,21 @@ export function HolidayHeader({
         </Pressable>
       </View>
 
-      <Text className="mt-5 text-[16px] font-medium text-brand-brown">
+      <Text className="mt-10 text-[17px] font-medium text-brand-brown">
         {copy.today} {formatCurrentDate()}
       </Text>
 
       <View className="mt-1 flex-row items-end gap-3">
-        <Text className="mb-1 mr-1 capitalize text-[32px] leading-[36px] text-brand-ink">
+        <Text className="mb-1 mr-1 capitalize text-[35px] leading-[39px] text-brand-ink">
           {formatMonthName(month)}
         </Text>
-        <Text className="text-[56px] font-bold leading-[58px] text-brand-ink">
+        <Text className="text-[60px] font-bold leading-[64px] text-brand-ink">
           {year}
         </Text>
       </View>
 
       <Text
-        className="mt-2 text-[15px] font-medium text-brand-brown"
+        className="mt-2 mb-10 text-[17px] font-medium text-brand-brown"
         numberOfLines={1}
         adjustsFontSizeToFit
         minimumFontScale={0.85}

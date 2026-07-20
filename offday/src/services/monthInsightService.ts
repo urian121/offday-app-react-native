@@ -1,4 +1,4 @@
-import { YearHolidayStats } from "../interface/monthInsight";
+import { YearHolidayStats } from "../interface";
 import {
   getDeviceLanguageCode,
   getDeviceLocale,
@@ -8,12 +8,12 @@ import { getApiBaseUrl } from "../utils/apiConfig";
 const insightCache = new Map<string, string>();
 
 /** Construye una clave local para reutilizar respuestas ya obtenidas del backend. */
-function getCacheKey(stats: YearHolidayStats, locale: string): string {
+function getCacheKey(stats: YearHolidayStats, languageCode: string): string {
   return [
     stats.countryCode,
     stats.year,
     stats.selectedMonth,
-    locale,
+    languageCode,
   ].join("-");
 }
 
@@ -30,7 +30,7 @@ export async function generateMonthInsight(
 
   const locale = getDeviceLocale();
   const languageCode = getDeviceLanguageCode();
-  const cacheKey = getCacheKey(stats, locale);
+  const cacheKey = getCacheKey(stats, languageCode);
   const cached = insightCache.get(cacheKey);
 
   if (cached) {

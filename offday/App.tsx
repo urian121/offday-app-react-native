@@ -20,10 +20,8 @@ import * as Sentry from '@sentry/react-native';
 const APP_BACKGROUND = "#FAEBD0";
 
 Sentry.init({
-  dsn: 'https://7ccf490b0bb706724a6add6fce92e53b@o4511764979122176.ingest.us.sentry.io/4511765040136192',
+  dsn: "https://7ccf490b0bb706724a6add6fce92e53b@o4511764979122176.ingest.us.sentry.io/4511765040136192",
 
-  // Adds more context data to events (IP address, cookies, user, etc.)
-  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
   sendDefaultPii: true,
 
   // Enable Logs
@@ -32,10 +30,10 @@ Sentry.init({
   // Configure Session Replay
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1,
-  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
-
-  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  // spotlight: __DEV__,
+  integrations: [
+    Sentry.mobileReplayIntegration(),
+    Sentry.feedbackIntegration(),
+  ],
 });
 
 /** Configura los proveedores nativos y el árbol principal de la aplicación. */

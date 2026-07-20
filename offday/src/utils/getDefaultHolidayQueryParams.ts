@@ -1,4 +1,4 @@
-import { HolidayQueryParams } from "../interface/holiday";
+import { HolidayQueryParams } from "../interface";
 import { getDeviceCountryCode } from "./getDeviceCountryCode";
 
 /** Construye los filtros iniciales a partir de la fecha y región del dispositivo. */

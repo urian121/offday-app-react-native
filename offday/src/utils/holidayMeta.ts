@@ -1,4 +1,4 @@
-import type { Holiday, HolidayType } from "../interface/holiday";
+import type { Holiday, HolidayType } from "../interface";
 import type { getHolidaysScreenCopy } from "./getHolidaysScreenCopy";
 
 /** Resume códigos regionales y marca cuántos quedaron ocultos. */

@@ -1,5 +1,4 @@
-import { Holiday } from "../interface/holiday";
-import { YearHolidayStats } from "../interface/monthInsight";
+import { Holiday, YearHolidayStats } from "../interface";
 import { formatMonthName } from "./dateFormat";
 import { filterHolidaysByMonth } from "./holidayDate";
 import { getHolidayDisplayName } from "./getHolidayDisplayName";

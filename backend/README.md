@@ -53,8 +53,8 @@ Body de ejemplo:
       }
     ]
   },
-  "locale": "es-CO",
-  "languageCode": "es"
+  "locale": "de-DE",
+  "languageCode": "de"
 }
 ```
 

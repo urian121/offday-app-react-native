@@ -48,7 +48,7 @@ export function MonthInsight({
   return (
     <View className="mt-4 rounded-[14px] bg-brand-gradient-start px-4 py-4">
       <View className="flex-row items-center justify-between gap-3">
-        <Text className="flex-1 text-[15px] font-medium uppercase tracking-[2px] text-brand-brown">
+        <Text className="flex-1 text-[20px] font-semibold uppercase tracking-[2px] text-brand-brown">
           {copy.insightTitle}
         </Text>
         <View className="h-9 w-9 items-center justify-center rounded-[10px] bg-brand-calendar-surface">
@@ -62,7 +62,7 @@ export function MonthInsight({
       </View>
       <Text
         className={`mt-2 leading-6 ${
-          error ? "text-base text-brand-brown" : "text-[16px] text-brand-deep"
+          error ? "text-base text-brand-brown" : "text-[17px] text-brand-deep"
         }`}
       >
         {message}

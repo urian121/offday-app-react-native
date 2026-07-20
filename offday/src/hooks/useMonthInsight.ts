@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Holiday } from "../interface/holiday";
+import { Holiday } from "../interface";
 import { generateMonthInsight } from "../services/monthInsightService";
 import { buildYearHolidayStats } from "../utils/buildYearHolidayStats";
 

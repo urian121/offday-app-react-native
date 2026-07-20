@@ -1,4 +1,4 @@
-import type { Country } from "../interface/country";
+import type { Country } from "../interface";
 
 const AVAILABLE_COUNTRIES_URL =
   "https://date.nager.at/api/v3/AvailableCountries";

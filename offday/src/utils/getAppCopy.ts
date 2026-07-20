@@ -2,10 +2,12 @@ import { getDeviceLocale } from "./getDeviceLocale";
 
 const COPY = {
   es: {
-    appLoading: "La app OffDay está cargando...",
+    appName: "OffDay",
+    appLoading: "Cargando...",
   },
   en: {
-    appLoading: "OffDay is loading...",
+    appName: "OffDay",
+    appLoading: "Loading...",
   },
 } as const;
 

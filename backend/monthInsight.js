@@ -18,7 +18,19 @@ function getTemporalRelation(year, month) {
   return "future";
 }
 
-/** Genera el texto del insight con OpenAI. */
+/** Obtiene el nombre localizado de un idioma con fallback a su código. */
+function getLanguageDisplayName(languageCode, locale) {
+  try {
+    return (
+      new Intl.DisplayNames([locale], { type: "language" }).of(languageCode) ??
+      languageCode
+    );
+  } catch {
+    return languageCode;
+  }
+}
+
+/** Genera el texto del insight con OpenAI en el idioma del dispositivo. */
 async function createInsightWithAI({ stats, locale, languageCode }) {
   if (!process.env.OPENAI_API_KEY?.trim()) {
     const error = new Error("OPENAI_API_KEY_MISSING");
@@ -26,6 +38,7 @@ async function createInsightWithAI({ stats, locale, languageCode }) {
     throw error;
   }
 
+  const languageName = getLanguageDisplayName(languageCode, locale);
   const temporalRelation = getTemporalRelation(
     stats.year,
     stats.selectedMonth
@@ -42,12 +55,19 @@ async function createInsightWithAI({ stats, locale, languageCode }) {
           "You write one short curious insight (2-3 sentences, max 280 chars)",
           "about the selected month of public holidays vs the rest of the year.",
           "Respect temporalRelation tense: past/present/future.",
-          `Reply only with the insight text in language: ${languageCode} (locale ${locale}).`,
+          `Reply only with the insight text, written entirely in ${languageName}.`,
+          `Device locale: ${locale}. Language code: ${languageCode}.`,
+          "Never reply in a different language than requested.",
         ].join(" "),
       },
       {
         role: "user",
-        content: JSON.stringify({ ...stats, temporalRelation, locale }),
+        content: JSON.stringify({
+          ...stats,
+          temporalRelation,
+          locale,
+          responseLanguage: languageCode,
+        }),
       },
     ],
   });
@@ -64,7 +84,7 @@ async function createInsightWithAI({ stats, locale, languageCode }) {
 }
 
 /**
- * Busca el dato del mes en BD (país + año + mes).
+ * Busca el dato del mes en BD (país + año + mes + idioma).
  * Si existe lo retorna; si no, lo genera con IA y lo guarda.
  */
 export async function generateMonthInsight({
@@ -75,14 +95,15 @@ export async function generateMonthInsight({
   const pais = stats.countryCode;
   const year = stats.year;
   const month = stats.selectedMonth;
+  const language = languageCode.toLowerCase();
 
-  const stored = await findMonthInsight(pais, year, month);
+  const stored = await findMonthInsight(pais, year, month, language);
   if (stored) {
     return stored;
   }
 
-  const insight = await createInsightWithAI({ stats, locale, languageCode });
-  await saveMonthInsight({ pais, year, month, note: insight });
+  const insight = await createInsightWithAI({ stats, locale, languageCode: language });
+  await saveMonthInsight({ pais, year, month, language, note: insight });
 
-  return (await findMonthInsight(pais, year, month)) ?? insight;
+  return (await findMonthInsight(pais, year, month, language)) ?? insight;
 }

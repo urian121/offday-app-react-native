@@ -27,10 +27,10 @@ function FilterSegment({
       onPress={onPress}
       className={`flex-1 px-4 py-3 active:opacity-75 ${className}`}
     >
-      <Text className="text-sm font-medium uppercase tracking-wider text-brand-base">
+      <Text className="text-xl font-medium uppercase tracking-wider text-brand-base">
         {label}
       </Text>
-      <Text className="mt-1 text-[15px] font-medium capitalize text-brand-deep">
+      <Text className="mt-1 text-lg font-medium capitalize text-brand-deep">
         {value}
       </Text>
     </Pressable>

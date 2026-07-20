@@ -2,7 +2,7 @@ import {
   Holiday,
   HolidayLocalNameSource,
   HolidayQueryParams,
-} from "../interface/holiday";
+} from "../interface";
 import { getDefaultHolidayQueryParams } from "../utils/getDefaultHolidayQueryParams";
 
 const V4_BASE_URL = "https://date.nager.at/api/v4/Holidays";

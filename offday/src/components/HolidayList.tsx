@@ -1,6 +1,6 @@
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { Holiday } from "../interface/holiday";
+import { Holiday } from "../interface";
 import { formatHolidayDay, formatWeekdayShort } from "../utils/dateFormat";
 import {
   formatSubdivisionCodes,
@@ -46,9 +46,7 @@ function MetaChip({
 }) {
   return (
     <View className={`rounded-md px-2.5 py-1 ${CHIP_STYLES[variant]}`}>
-      <Text
-        className={`text-[12px] font-medium ${CHIP_TEXT_STYLES[variant]}`}
-      >
+      <Text className={`text-[13px] font-medium ${CHIP_TEXT_STYLES[variant]}`}>
         {label}
       </Text>
     </View>
@@ -74,13 +72,13 @@ function HolidayCard({
         <Text className="text-[22px] font-semibold text-brand-ink">
           {formatHolidayDay(holiday.date)}
         </Text>
-        <Text className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-brand-weekday">
+        <Text className="mt-0.5 text-[12px] font-medium uppercase tracking-wide text-brand-weekday">
           {formatWeekdayShort(holiday.date)}
         </Text>
       </View>
 
       <View className="flex-1 justify-center">
-        <Text className="text-[16px] font-medium leading-5 text-brand-ink">
+        <Text className="text-[17px] font-medium leading-[22px] text-brand-ink">
           {getHolidayDisplayName(holiday)}
         </Text>
 
@@ -99,7 +97,7 @@ function HolidayCard({
         </View>
 
         {subdivisions ? (
-          <Text className="mt-1.5 text-[11px] leading-4 text-brand-brown">
+          <Text className="mt-1.5 text-[12px] leading-4 text-brand-brown">
             {subdivisions}
           </Text>
         ) : null}
@@ -146,7 +144,9 @@ function getHolidayKey(holiday: Holiday): string {
 /** Muestra el título de la sección dentro del contenido desplazable. */
 function HolidayListTitle({ title }: { title: string }) {
   return (
-    <Text className="mb-4 text-lg font-semibold text-brand-ink">{title}</Text>
+    <Text className="mb-4 text-[20px] font-semibold text-brand-ink">
+      {title}
+    </Text>
   );
 }
 
@@ -177,7 +177,7 @@ export function HolidayList({
       <View>
         <HolidayListTitle title={copy.holidaysTitle} />
         <View className="rounded-[14px] bg-brand-holiday-card px-4 py-4">
-          <Text className="text-sm leading-5 text-brand-ink">{error}</Text>
+          <Text className="text-[15px] leading-5 text-brand-ink">{error}</Text>
         </View>
       </View>
     );
@@ -203,7 +203,7 @@ export function HolidayList({
       <View>
         <HolidayListTitle title={copy.holidaysTitle} />
         <View className="rounded-[14px] bg-brand-holiday-card px-5 py-10">
-          <Text className="text-center text-sm leading-5 text-brand-brown">
+          <Text className="text-center text-[17px] leading-5 text-brand-brown">
             {copy.noHolidays}
           </Text>
         </View>

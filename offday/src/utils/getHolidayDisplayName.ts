@@ -1,4 +1,4 @@
-import { Holiday } from "../interface/holiday";
+import { Holiday } from "../interface";
 import { getDeviceLanguageCode } from "./getDeviceLocale";
 
 /** Elige entre el nombre inglés y el nombre local según el idioma del teléfono. */

@@ -66,3 +66,16 @@ npx expo run:android
 npx expo-doctor
 npx eas build --platform android --profile preview --local
 ```
+
+
+# EAS compila en la nube y al terminar te da un enlace para descargar el .aab
+```bash
+cd offday
+npx eas build --platform android --profile production
+
+# AAB para Play Store
+npx eas build --platform android --profile production
+
+# APK para prueba interna
+npx eas build --platform android --profile preview
+```

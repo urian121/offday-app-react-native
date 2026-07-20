@@ -9,12 +9,12 @@ type PlanRestCardProps = {
 /** Invita a organizar el descanso aprovechando los festivos del mes. */
 export function PlanRestCard({ copy }: PlanRestCardProps) {
   return (
-    <View className="flex-row items-center overflow-hidden rounded-[14px] bg-brand-rest-surface px-4 py-4">
+    <View className="flex-row mt-10 items-center overflow-hidden rounded-[14px] bg-brand-rest-surface px-4 py-4">
       <View className="min-w-0 flex-1 pr-3">
-        <Text className="text-[16px] font-semibold text-brand-base">
+        <Text className="text-[17px] font-semibold text-brand-base">
           {copy.restPlanTitle}
         </Text>
-        <Text className="mt-1 text-[14px] leading-[19px] text-brand-rest-muted">
+        <Text className="mt-1 text-[15px] leading-[19px] text-brand-rest-muted">
           {copy.restPlanSubtitle}
         </Text>
       </View>

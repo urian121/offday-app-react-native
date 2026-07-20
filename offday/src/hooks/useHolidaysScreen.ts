@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Country } from "../interface/country";
-import { Holiday } from "../interface/holiday";
+import type { Country } from "../interface";
+import { Holiday } from "../interface";
 import { getAvailableCountries } from "../services/countriesService";
 import { getHolidaysForYear } from "../services/holidaysService";
 import { getDefaultHolidayQueryParams } from "../utils/getDefaultHolidayQueryParams";
