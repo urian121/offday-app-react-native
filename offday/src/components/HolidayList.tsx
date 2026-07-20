@@ -1,5 +1,6 @@
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Holiday } from "../interface";
 import { formatHolidayDay, formatWeekdayShort } from "../utils/dateFormat";
 import {
@@ -161,6 +162,9 @@ export function HolidayList({
   insightLoading,
   insightError,
 }: HolidayListProps) {
+  const insets = useSafeAreaInsets();
+  const listBottomPadding = Math.max(insets.bottom, 16) + 28;
+
   if (loading) {
     return (
       <View>
@@ -200,7 +204,7 @@ export function HolidayList({
 
   if (holidays.length === 0) {
     return (
-      <View>
+      <View style={{ paddingBottom: listBottomPadding }}>
         <HolidayListTitle title={copy.holidaysTitle} />
         <View className="rounded-[14px] bg-brand-holiday-card px-5 py-10">
           <Text className="text-center text-[17px] leading-5 text-brand-brown">
@@ -219,7 +223,7 @@ export function HolidayList({
       keyExtractor={getHolidayKey}
       showsVerticalScrollIndicator={false}
       style={{ backgroundColor: "transparent" }}
-      contentContainerStyle={{ paddingBottom: 24 }}
+      contentContainerStyle={{ paddingBottom: listBottomPadding }}
       ListHeaderComponent={<HolidayListTitle title={copy.holidaysTitle} />}
       ListFooterComponent={listFooter}
       renderItem={({ item, index }) => (
