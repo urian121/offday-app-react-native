@@ -54,28 +54,44 @@ EXPO_PUBLIC_API_URL=http://192.168.x.x:3000
 
 - En dispositivo físico usa la IP local de tu máquina (no `localhost`).
 - Arranca el backend con `npm run dev` en `backend/` y asegúrate de tener `OPENAI_API_KEY` allí.
-- Con `eas build`, configura `EXPO_PUBLIC_API_URL` en el proyecto de Expo o en el `.env` local.
+- Con `eas build` en la nube, configura `EXPO_PUBLIC_API_URL` y `SENTRY_AUTH_TOKEN` en Expo → Environment variables.
 
-Comandos
+## Comandos
 
 ```bash
 npx expo start --clear
 npx expo start --clear --localhost
 npx expo start --android
 npx expo run:android
-npx expo-doctor
+```
+
+## Builds EAS
+
+`--local` **no** lee las Environment variables de Expo. Exporta `SENTRY_AUTH_TOKEN` desde `.env.local`:
+
+```bash
+cd offday
+set -a && source .env.local && source .env && set +a
 npx eas build --platform android --profile preview --local
 ```
 
+En la nube (sí lee las vars del dashboard de Expo):
 
-# EAS compila en la nube y al terminar te da un enlace para descargar el .aab
 ```bash
-cd offday
-npx eas build --platform android --profile production
-
 # AAB para Play Store
 npx eas build --platform android --profile production
 
 # APK para prueba interna
 npx eas build --platform android --profile preview
 ```
+
+Si generaste `android/` con prebuild y quieres borrarla:
+
+```bash
+rm -rf android
+```
+
+
+cd offday
+set -a && source .env.local && source .env && set +a
+npx eas build --platform android --profile preview --local

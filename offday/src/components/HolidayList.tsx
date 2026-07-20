@@ -69,7 +69,7 @@ function HolidayCard({
   return (
     <View className="flex-row gap-3 rounded-[14px] bg-brand-holiday-card px-3 py-3">
       <View className="w-14 items-center justify-center rounded-[10px] bg-brand-type-chip/35 py-2">
-        <Text className="text-[22px] font-semibold text-brand-ink">
+        <Text className="text-[26px] font-semibold text-brand-ink">
           {formatHolidayDay(holiday.date)}
         </Text>
         <Text className="mt-0.5 text-[12px] font-medium uppercase tracking-wide text-brand-weekday">

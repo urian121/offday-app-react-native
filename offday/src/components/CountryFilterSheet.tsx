@@ -1,10 +1,9 @@
 import getCountryFlag from "country-flag-icons/unicode";
 import { useMemo, useState, type RefObject } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Dimensions, Pressable, Text, TextInput, View } from "react-native";
 import {
   BottomSheetFlatList,
   BottomSheetModal,
-  BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import type { Country } from "../interface";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
@@ -25,7 +24,10 @@ type CountryFilterSheetProps = {
   onSelect: (countryCode: string) => void;
 };
 
-const COUNTRY_SHEET_SNAP_POINTS = ["75%"];
+/** Altura fija (50% de pantalla). Evita que el % se recalcule al abrir el teclado. */
+const COUNTRY_SHEET_SNAP_POINTS = [
+  Math.round(Dimensions.get("window").height * 0.5),
+];
 const SEARCH_STYLE = {
   marginHorizontal: 24,
   marginBottom: 14,
@@ -70,6 +72,11 @@ export function CountryFilterSheet({
     onDismiss();
   };
 
+  /** Mantiene el sheet en su snap al enfocar el buscador. */
+  const handleSearchFocus = () => {
+    sheetRef.current?.snapToIndex(0);
+  };
+
   if (!visible) {
     return null;
   }
@@ -77,21 +84,26 @@ export function CountryFilterSheet({
   return (
     <BottomSheetModal
       ref={sheetRef}
+      index={0}
       snapPoints={COUNTRY_SHEET_SNAP_POINTS}
+      enableDynamicSizing={false}
+      enableOverDrag={false}
       backdropComponent={FilterSheetBackdrop}
       backgroundStyle={FILTER_SHEET_BACKGROUND_STYLE}
       handleIndicatorStyle={FILTER_SHEET_HANDLE_STYLE}
-      keyboardBehavior="interactive"
-      keyboardBlurBehavior="restore"
+      keyboardBehavior="extend"
+      keyboardBlurBehavior="none"
+      android_keyboardInputMode="adjustPan"
       onDismiss={handleDismiss}
     >
       <Text className="px-6 pb-4 text-xs font-medium uppercase tracking-[2px] text-brand-muted">
         {copy.selectCountry}
       </Text>
 
-      <BottomSheetTextInput
+      <TextInput
         value={query}
         onChangeText={setQuery}
+        onFocus={handleSearchFocus}
         placeholder={copy.searchCountry}
         placeholderTextColor="#7A7269"
         autoCapitalize="none"
