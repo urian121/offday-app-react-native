@@ -1,7 +1,7 @@
 import type { Holiday } from "../interface";
 
 /** Extrae el mes 1-12 de una fecha ISO sin conversiones de zona horaria. */
-export function getHolidayMonth(date: string): number {
+function getHolidayMonth(date: string): number {
   const [, month] = date.split("-");
   return Number(month);
 }

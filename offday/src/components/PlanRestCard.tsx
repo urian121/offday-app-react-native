@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { MaterialDesignIcons } from "@react-native-vector-icons/material-design-icons";
+import { Ionicons } from "@react-native-vector-icons/ionicons";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 
 type PlanRestCardProps = {
@@ -18,8 +18,8 @@ export function PlanRestCard({ copy }: PlanRestCardProps) {
           {copy.restPlanSubtitle}
         </Text>
       </View>
-      <MaterialDesignIcons
-        name="calendar-star"
+      <Ionicons
+        name="calendar-outline"
         size={40}
         color="#E8A33D"
         accessibilityLabel="Calendario de descanso"
