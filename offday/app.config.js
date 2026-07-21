@@ -4,9 +4,9 @@ require("dotenv").config({ quiet: true });
 
 module.exports = {
   expo: {
-    name: "OffDay",
+    name: "FestiDías",
     slug: "offday",
-    version: "1.0.1",
+    version: "1.1.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",

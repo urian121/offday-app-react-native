@@ -25,6 +25,7 @@ module.exports = {
           ink: "#2C2C2A",
           muted: "#7A7269",
           accent: "#C4715A",
+          title: "#D67D1F",
           "accent-soft": "#E8D9CF",
           gold: "#DAA428",
           cream: "#FAEBD0",

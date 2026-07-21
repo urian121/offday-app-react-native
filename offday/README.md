@@ -1,4 +1,4 @@
-# OffDay
+# FestiDías
 
 Aplicación móvil Expo + React Native que muestra días festivos por país, mes y año.
 

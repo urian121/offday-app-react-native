@@ -34,11 +34,11 @@ export function HolidayHeader({
               name="calendar"
               size={22}
               color="#412402"
-              accessibilityLabel="Logo de OffDay"
+              accessibilityLabel="Logo de FestiDías"
             />
           </View>
           <Text className="text-[22px] font-semibold tracking-wide text-brand-ink">
-            OffDay
+            Festi<Text className="text-brand-title">Días</Text>
           </Text>
         </View>
 
