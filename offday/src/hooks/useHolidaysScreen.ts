@@ -8,8 +8,6 @@ import { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 import { filterHolidaysByMonth } from "../utils/holidayDate";
 import { useLazyBottomSheet } from "./useLazyBottomSheet";
 
-const defaults = getDefaultHolidayQueryParams();
-
 const YEARS_BACK = 1;
 const YEARS_FORWARD = 5;
 
@@ -29,6 +27,7 @@ export function useHolidaysScreen() {
   const monthSheet = useLazyBottomSheet();
   const yearSheet = useLazyBottomSheet();
 
+  const defaults = useMemo(getDefaultHolidayQueryParams, []);
   const [month, setMonth] = useState(defaults.month);
   const [year, setYear] = useState(defaults.year);
   const [yearHolidays, setYearHolidays] = useState<Holiday[]>([]);
@@ -56,7 +55,7 @@ export function useHolidaysScreen() {
           data.find(
             (item) => item.countryCode === defaults.countryCode.toUpperCase()
           ) ??
-            data.find((item) => item.countryCode === "US") ??
+            data.find((item) => item.countryCode === "CO") ??
             data[0] ?? {
               countryCode: defaults.countryCode,
               name: defaults.countryCode,
@@ -80,7 +79,7 @@ export function useHolidaysScreen() {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [defaults]);
 
   const selectedCountryCode = country.countryCode;
   const queryKey = `${selectedCountryCode}-${year}`;
