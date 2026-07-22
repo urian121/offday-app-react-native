@@ -28,7 +28,7 @@ module.exports = {
       barStyle: "dark-content",
     },
     androidNavigationBar: {
-      backgroundColor: "#FAEBD0",
+      backgroundColor: "#fff5ea",
       barStyle: "dark-content",
     },
     web: {

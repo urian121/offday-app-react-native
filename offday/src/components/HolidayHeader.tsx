@@ -25,6 +25,8 @@ export function HolidayHeader({
   copy,
   onCountryPress,
 }: HolidayHeaderProps) {
+  const summary = copy.holidaysSummary(holidayCount, yearHolidayCount, year);
+
   return (
     <View className="relative pt-2">
       <View className="flex-row items-center justify-between gap-3">
@@ -44,7 +46,7 @@ export function HolidayHeader({
 
         <Pressable
           onPress={onCountryPress}
-          className="max-w-[56%] flex-row items-center gap-1.5 rounded-xl bg-white/35 px-2.5 py-2 active:opacity-70"
+          className="max-w-[56%] flex-row items-center gap-1.5 rounded-xl bg-brand-gradient-start px-2.5 py-2 active:opacity-70"
           accessibilityRole="button"
           accessibilityLabel={country?.name ?? copy.selectCountry}
         >
@@ -87,7 +89,14 @@ export function HolidayHeader({
         adjustsFontSizeToFit
         minimumFontScale={0.85}
       >
-        {copy.holidaysSummary(holidayCount, yearHolidayCount, year)}
+        <Text className="text-[22px] font-bold text-brand-deep">
+          {summary.monthCount}
+        </Text>
+        {summary.monthPhrase}
+        <Text className="text-[22px] font-bold text-brand-deep">
+          {summary.yearCount}
+        </Text>
+        {summary.yearPhrase}
       </Text>
     </View>
   );

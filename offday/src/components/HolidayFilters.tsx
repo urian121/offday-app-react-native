@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from "react-native";
+import { Ionicons } from "@react-native-vector-icons/ionicons";
 import { formatMonthName } from "../utils/dateFormat";
 import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 
@@ -27,12 +28,15 @@ function FilterSegment({
       onPress={onPress}
       className={`flex-1 px-4 py-3 active:opacity-75 ${className}`}
     >
-      <Text className="text-xl font-medium uppercase tracking-wider text-brand-base">
+      <Text className="text-xl font-medium uppercase tracking-wider text-brand-brown">
         {label}
       </Text>
-      <Text className="mt-1 text-lg font-medium capitalize text-brand-deep">
-        {value}
-      </Text>
+      <View className="mt-1 flex-row items-center gap-1">
+        <Text className="text-lg font-medium capitalize text-brand-deep">
+          {value}
+        </Text>
+        <Ionicons name="chevron-down" size={16} color="#633806" />
+      </View>
     </Pressable>
   );
 }
@@ -46,7 +50,7 @@ export function HolidayFilters({
   onYearPress,
 }: HolidayFiltersProps) {
   return (
-    <View className="mt-6 overflow-hidden rounded-[14px] bg-brand-filter-surface">
+    <View className="mt-6 overflow-hidden rounded-[14px] bg-brand-gradient-start">
       <View className="flex-row">
         <FilterSegment
           label={copy.month}
