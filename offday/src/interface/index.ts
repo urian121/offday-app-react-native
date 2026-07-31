@@ -37,25 +37,28 @@ export interface HolidayQueryParams {
   month: number;
 }
 
-/** Resumen mensual de festivos enviado al backend para el insight. */
-export interface MonthHolidaySummary {
+/** Conteo de festivos de un mes (sin listar nombres) para el insight. */
+export interface MonthCountSummary {
   month: number;
   monthName: string;
   count: number;
-  holidays: Array<{
-    name: string;
-    date: string;
-    national: boolean;
-    types: string[];
-  }>;
 }
 
-/** Estadísticas anuales del país usadas para generar el dato del mes. */
+/** Festivo del mes seleccionado enviado al backend para el insight. */
+export interface InsightHoliday {
+  name: string;
+  date: string;
+  national: boolean;
+  types: string[];
+}
+
+/** Estadísticas anuales compactas usadas para generar el dato del mes. */
 export interface YearHolidayStats {
   countryCode: string;
   year: number;
   selectedMonth: number;
   selectedMonthName: string;
   yearTotal: number;
-  months: MonthHolidaySummary[];
+  months: MonthCountSummary[];
+  selectedHolidays: InsightHoliday[];
 }

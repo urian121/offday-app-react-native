@@ -9,19 +9,7 @@ type MonthInsightProps = {
   copy: ReturnType<typeof getHolidaysScreenCopy>;
 };
 
-/** Traduce códigos técnicos del servicio de IA a mensajes para la interfaz. */
-function resolveErrorMessage(
-  error: string,
-  copy: ReturnType<typeof getHolidaysScreenCopy>
-): string {
-  if (error === "API_URL_MISSING") {
-    return copy.insightMissingApiUrl;
-  }
-
-  return copy.insightError;
-}
-
-/** Presenta el estado de carga, error o contenido del insight mensual. */
+/** Presenta el estado de carga, contenido o aviso genérico del insight mensual. */
 export function MonthInsight({
   insight,
   loading,
@@ -43,7 +31,8 @@ export function MonthInsight({
     return null;
   }
 
-  const message = error ? resolveErrorMessage(error, copy) : insight;
+  // Ante cualquier fallo de IA/API: mensaje genérico, sin detalles técnicos.
+  const message = error ? copy.insightUnavailable : insight;
 
   return (
     <View className="mt-4 rounded-[14px] bg-brand-gradient-start px-4 py-4">

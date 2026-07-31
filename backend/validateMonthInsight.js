@@ -17,7 +17,7 @@ function isIntegerInRange(value, min, max) {
   );
 }
 
-/** Valida un festivo individual del payload. */
+/** Valida un festivo del mes seleccionado. */
 function isValidHoliday(holiday) {
   return (
     holiday &&
@@ -33,23 +33,21 @@ function isValidHoliday(holiday) {
   );
 }
 
-/** Valida el resumen de un mes. */
-function isValidMonthSummary(monthSummary) {
+/** Valida un conteo mensual (sin listado de festivos). */
+function isValidMonthCount(monthSummary) {
   return (
     monthSummary &&
     typeof monthSummary === "object" &&
     !Array.isArray(monthSummary) &&
     isIntegerInRange(monthSummary.month, 1, 12) &&
     isNonEmptyString(monthSummary.monthName, 40) &&
-    isIntegerInRange(monthSummary.count, 0, 50) &&
-    Array.isArray(monthSummary.holidays) &&
-    monthSummary.holidays.length <= 50 &&
-    monthSummary.holidays.every(isValidHoliday)
+    isIntegerInRange(monthSummary.count, 0, 50)
   );
 }
 
 /**
  * Valida y normaliza el body de POST /api/month-insight.
+ * Payload compacto: conteos del año + festivos solo del mes activo.
  * @returns {{ stats: object, locale: string, languageCode: string } | null}
  */
 export function parseMonthInsightBody(body) {
@@ -88,9 +86,16 @@ export function parseMonthInsightBody(body) {
 
   if (
     !Array.isArray(stats.months) ||
-    stats.months.length === 0 ||
-    stats.months.length > 12 ||
-    !stats.months.every(isValidMonthSummary)
+    stats.months.length !== 12 ||
+    !stats.months.every(isValidMonthCount)
+  ) {
+    return null;
+  }
+
+  if (
+    !Array.isArray(stats.selectedHolidays) ||
+    stats.selectedHolidays.length > 50 ||
+    !stats.selectedHolidays.every(isValidHoliday)
   ) {
     return null;
   }
@@ -121,6 +126,7 @@ export function parseMonthInsightBody(body) {
       selectedMonthName: stats.selectedMonthName.trim(),
       yearTotal: stats.yearTotal,
       months: stats.months,
+      selectedHolidays: stats.selectedHolidays,
     },
     locale: locale || "en-US",
     languageCode: languageCode ? languageCode.toLowerCase() : "en",

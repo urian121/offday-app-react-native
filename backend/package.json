@@ -1,13 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "API Express de FestiDías: insight mensual vía Replicate y cache en Turso.",
   "main": "server.js",
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js"
   },
-  "keywords": [],
   "author": "Urian Viera",
   "license": "ISC",
   "type": "module",
@@ -16,6 +15,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "openai": "^6.48.0"
+    "nodemailer": "^9.0.3",
+    "replicate": "^1.4.0"
   }
 }

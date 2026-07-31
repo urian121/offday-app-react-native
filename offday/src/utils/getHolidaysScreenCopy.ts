@@ -27,9 +27,8 @@ const COPY = {
       "Transforma cada festivo en la excusa perfecta para desconectar, compartir en familia, conectar con la naturaleza, escaparte con amigos y recargar energías.",
     insightTitle: "Dato del mes",
     insightLoading: "Generando dato curioso...",
-    insightError: "No se pudo generar el dato curioso.",
-    insightMissingApiUrl:
-      "Falta EXPO_PUBLIC_API_URL en el build. Revisa tu .env y reinicia Expo.",
+    insightUnavailable:
+      "No hay información o dato curioso disponible sobre este mes.",
     holidayTypeLabels: {
       Public: "Público",
       Bank: "Bancario",
@@ -64,9 +63,8 @@ const COPY = {
     restPlanSubtitle: "Turn holidays into moments to recharge.",
     insightTitle: "Month insight",
     insightLoading: "Generating a curious fact...",
-    insightError: "Could not generate the month insight.",
-    insightMissingApiUrl:
-      "EXPO_PUBLIC_API_URL is missing from this build. Check your .env and restart Expo.",
+    insightUnavailable:
+      "There is no information or curious fact available for this month.",
     holidayTypeLabels: {
       Public: "Public",
       Bank: "Bank",

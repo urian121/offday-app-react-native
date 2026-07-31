@@ -56,7 +56,7 @@ export async function generateMonthInsight(
   const insight = data?.insight?.trim();
 
   if (!insight) {
-    throw new Error("OPENAI_EMPTY_RESPONSE");
+    throw new Error("EMPTY_RESPONSE");
   }
 
   insightCache.set(cacheKey, insight);

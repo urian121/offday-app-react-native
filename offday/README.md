@@ -53,7 +53,7 @@ EXPO_PUBLIC_API_URL=http://192.168.x.x:3000
 ```
 
 - En dispositivo físico usa la IP local de tu máquina (no `localhost`).
-- Arranca el backend con `npm run dev` en `backend/` y asegúrate de tener `OPENAI_API_KEY` allí.
+- Arranca el backend con `npm run dev` en `backend/` y asegúrate de tener `REPLICATE_API_TOKEN` allí.
 - Con `eas build` en la nube, configura `EXPO_PUBLIC_API_URL` y `SENTRY_AUTH_TOKEN` en Expo → Environment variables.
 
 ## Comandos
@@ -69,6 +69,7 @@ npx expo run:android
 
 `--local` **no** lee las Environment variables de Expo. Exporta `SENTRY_AUTH_TOKEN` desde `.env.local`:
 
+Para generar APK en local y hacer pruebas
 ```bash
 cd offday
 set -a && source .env.local && source .env && set +a
@@ -92,6 +93,12 @@ rm -rf android
 ```
 
 
-cd offday
-set -a && source .env.local && source .env && set +a
-npx eas build --platform android --profile preview --local
+ajustar el backen por si la api de chatgpt falla o la api original de la consulta
+a los dias festivos.
+
+
+OJO
+siempre antes de crear el 
+# AAB para Play Store, Debes generar el AAB de producción, incluso si primero lo vas a publicar en una Prueba cerrada (Closed Testing).
+npx eas build --platform android --profile production
+SE DEBE CAMBIAR LA VERSION EN EL APP.CONFIG.JS

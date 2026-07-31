@@ -3,7 +3,10 @@ import { formatMonthName } from "./dateFormat";
 import { filterHolidaysByMonth } from "./holidayDate";
 import { getHolidayDisplayName } from "./getHolidayDisplayName";
 
-/** Resume todos los festivos de un año para generar el insight mensual. */
+/**
+ * Resume el año para el insight: conteos por mes + festivos solo del mes activo.
+ * Evita enviar los 12 listados completos al backend / IA.
+ */
 export function buildYearHolidayStats(
   holidays: Holiday[],
   countryCode: string,
@@ -18,14 +21,17 @@ export function buildYearHolidayStats(
       month,
       monthName: formatMonthName(month),
       count: monthHolidays.length,
-      holidays: monthHolidays.map((holiday) => ({
-        name: getHolidayDisplayName(holiday),
-        date: holiday.date,
-        national: holiday.nationalHoliday,
-        types: holiday.holidayTypes,
-      })),
     };
   });
+
+  const selectedHolidays = filterHolidaysByMonth(holidays, selectedMonth).map(
+    (holiday) => ({
+      name: getHolidayDisplayName(holiday),
+      date: holiday.date,
+      national: holiday.nationalHoliday,
+      types: holiday.holidayTypes,
+    })
+  );
 
   return {
     countryCode,
@@ -34,5 +40,6 @@ export function buildYearHolidayStats(
     selectedMonthName: formatMonthName(selectedMonth),
     yearTotal: holidays.length,
     months,
+    selectedHolidays,
   };
 }
