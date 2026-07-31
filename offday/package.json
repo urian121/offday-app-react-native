@@ -25,7 +25,6 @@
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.14",
     "@react-native-vector-icons/ionicons": "^13.1.2",
-    "@sentry/react-native": "~7.11.0",
     "country-flag-icons": "^1.6.20",
     "expo": "~57.0.7",
     "expo-build-properties": "~57.0.6",

@@ -10,29 +10,11 @@ import { AppLoadingScreen } from "./src/components/AppLoadingScreen";
 import { HolidaysScreen } from "./src/components/HolidaysScreen";
 import { useSplashScreen } from "./src/hooks/useSplashScreen";
 import "./global.css";
-import * as Sentry from '@sentry/react-native';
 
 const APP_BACKGROUND = "#fff5ea";
 
-Sentry.init({
-  dsn: "https://7ccf490b0bb706724a6add6fce92e53b@o4511764979122176.ingest.us.sentry.io/4511765040136192",
-
-  sendDefaultPii: true,
-
-  // Enable Logs
-  enableLogs: true,
-
-  // Configure Session Replay
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
-  integrations: [
-    Sentry.mobileReplayIntegration(),
-    Sentry.feedbackIntegration(),
-  ],
-});
-
 /** Configura los proveedores nativos y el árbol principal de la aplicación. */
-export default Sentry.wrap(function App() {
+export default function App() {
   useEffect(() => {
     void SystemUI.setBackgroundColorAsync(APP_BACKGROUND);
   }, []);
@@ -50,7 +32,7 @@ export default Sentry.wrap(function App() {
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
-});
+}
 
 /** Coordina la pantalla principal y la transición del overlay de carga. */
 function AppContent() {

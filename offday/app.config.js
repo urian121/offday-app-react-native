@@ -39,14 +39,6 @@ module.exports = {
       "expo-localization",
       "expo-status-bar",
       [
-        "@sentry/react-native/expo",
-        {
-          url: "https://sentry.io/",
-          organization: "dev-5q",
-          project: "react-native",
-        },
-      ],
-      [
         "expo-splash-screen",
         {
           backgroundColor: "#E9C980",
