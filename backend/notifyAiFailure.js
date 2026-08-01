@@ -1,12 +1,5 @@
-import { sendAlertEmail } from "./mail.js";
+import { sendAlertWithCooldown } from "./alertNotify.js";
 import { REPLICATE_FALLBACK_MODEL, REPLICATE_MODEL } from "./replicate.js";
-
-/** Intervalo mínimo entre alertas del mismo tipo (por defecto 6 h). */
-const COOLDOWN_MS =
-  Number(process.env.MAIL_ALERT_COOLDOWN_MS) || 6 * 60 * 60 * 1000;
-
-/** Último envío por razón, para no saturar el buzón. */
-const lastSentAtByReason = new Map();
 
 /**
  * Detecta fallos de Replicate por créditos, token o acceso
@@ -75,7 +68,11 @@ function resolveFailureReason(error) {
     return "insufficient_credit";
   }
 
-  if (status === 401 || message.includes("unauthenticated") || message.includes("invalid token")) {
+  if (
+    status === 401 ||
+    message.includes("unauthenticated") ||
+    message.includes("invalid token")
+  ) {
     return "invalid_api_token";
   }
 
@@ -102,12 +99,6 @@ function buildSubject(reason) {
   }
 }
 
-/** Evita reenviar la misma alerta dentro del cooldown. */
-function canSend(reason) {
-  const lastSentAt = lastSentAtByReason.get(reason) ?? 0;
-  return Date.now() - lastSentAt >= COOLDOWN_MS;
-}
-
 /**
  * Envía un correo si el error es de créditos/auth y el cooldown lo permite.
  * No lanza: un fallo de correo no debe romper la API.
@@ -118,11 +109,6 @@ export async function notifyAiFailure(error, context = {}) {
   }
 
   const reason = resolveFailureReason(error);
-
-  if (!canSend(reason)) {
-    return;
-  }
-
   const subject = buildSubject(reason);
   const text = [
     "La API de Replicate del backend de FestiDías falló.",
@@ -148,13 +134,5 @@ export async function notifyAiFailure(error, context = {}) {
     .filter(Boolean)
     .join("\n");
 
-  try {
-    const sent = await sendAlertEmail({ subject, text });
-
-    if (sent) {
-      lastSentAtByReason.set(reason, Date.now());
-    }
-  } catch {
-    // Silencioso a propósito: el correo es un aviso, no parte del flujo.
-  }
+  await sendAlertWithCooldown({ reason, subject, text });
 }

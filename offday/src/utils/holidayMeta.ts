@@ -1,5 +1,5 @@
 import type { Holiday, HolidayType } from "../interface";
-import type { getHolidaysScreenCopy } from "./getHolidaysScreenCopy";
+import type { HolidaysScreenCopy } from "./getHolidaysScreenCopy";
 
 /** Resume códigos regionales y marca cuántos quedaron ocultos. */
 export function formatSubdivisionCodes(
@@ -21,7 +21,7 @@ export function formatSubdivisionCodes(
 /** Traduce un tipo de festivo usando el copy activo de la pantalla. */
 export function getHolidayTypeLabel(
   type: HolidayType,
-  copy: ReturnType<typeof getHolidaysScreenCopy>
+  copy: HolidaysScreenCopy
 ): string {
   return copy.holidayTypeLabels[type] ?? type;
 }

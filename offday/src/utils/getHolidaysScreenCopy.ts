@@ -76,8 +76,11 @@ const COPY = {
   },
 } as const;
 
+type HolidaysScreenCopyMap = typeof COPY;
+export type HolidaysScreenCopy = HolidaysScreenCopyMap[keyof HolidaysScreenCopyMap];
+
 /** Selecciona los textos de pantalla según el idioma del dispositivo. */
-export function getHolidaysScreenCopy() {
+export function getHolidaysScreenCopy(): HolidaysScreenCopy {
   const locale = getDeviceLocale();
   return locale.startsWith("es") ? COPY.es : COPY.en;
 }

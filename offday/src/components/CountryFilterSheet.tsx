@@ -6,7 +6,7 @@ import {
   BottomSheetModal,
 } from "@gorhom/bottom-sheet";
 import type { Country } from "../interface";
-import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
+import type { HolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 import {
   FILTER_SHEET_BACKGROUND_STYLE,
   FILTER_SHEET_HANDLE_STYLE,
@@ -19,7 +19,7 @@ type CountryFilterSheetProps = {
   countries: Country[];
   selectedCountryCode: string;
   loading: boolean;
-  copy: ReturnType<typeof getHolidaysScreenCopy>;
+  copy: HolidaysScreenCopy;
   onDismiss: () => void;
   onSelect: (countryCode: string) => void;
 };

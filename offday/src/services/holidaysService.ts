@@ -4,9 +4,9 @@ import {
   HolidayQueryParams,
 } from "../interface";
 import { getDefaultHolidayQueryParams } from "../utils/getDefaultHolidayQueryParams";
-
-const V4_BASE_URL = "https://date.nager.at/api/v4/Holidays";
-const V3_BASE_URL = "https://date.nager.at/api/v3/PublicHolidays";
+import { getDeviceLanguageCode } from "../utils/getDeviceLocale";
+import { NAGER_V3_BASE_URL, NAGER_V4_BASE_URL } from "../utils/nagerConfig";
+import { reportNagerFailure } from "./nagerAlertService";
 
 const localNamesCache = new Map<string, Map<string, string>>();
 
@@ -16,14 +16,44 @@ async function fetchV4YearHolidays(
   year: number,
   signal?: AbortSignal
 ): Promise<Holiday[]> {
-  const url = `${V4_BASE_URL}/${countryCode.toUpperCase()}/${year}`;
-  const response = await fetch(url, { signal });
+  const url = `${NAGER_V4_BASE_URL}/${countryCode.toUpperCase()}/${year}`;
 
-  if (!response.ok) {
-    throw new Error(`Error al obtener festivos: ${response.status}`);
+  try {
+    const response = await fetch(url, { signal });
+
+    if (!response.ok) {
+      reportNagerFailure({
+        source: "v4",
+        countryCode,
+        year,
+        status: response.status,
+        message: `Error al obtener festivos: ${response.status}`,
+      });
+      throw new Error(`Error al obtener festivos: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw error;
+    }
+
+    if (
+      !(
+        error instanceof Error &&
+        error.message.startsWith("Error al obtener festivos:")
+      )
+    ) {
+      reportNagerFailure({
+        source: "v4",
+        countryCode,
+        year,
+        message: error instanceof Error ? error.message : "NETWORK_ERROR",
+      });
+    }
+
+    throw error;
   }
-
-  return response.json();
 }
 
 /** Obtiene y cachea nombres locales de v3 sin bloquear los datos v4. */
@@ -41,10 +71,17 @@ async function fetchLocalNamesMap(
   }
 
   try {
-    const url = `${V3_BASE_URL}/${year}/${code}`;
+    const url = `${NAGER_V3_BASE_URL}/${year}/${code}`;
     const response = await fetch(url, { signal });
 
     if (!response.ok) {
+      reportNagerFailure({
+        source: "v3",
+        countryCode: code,
+        year,
+        status: response.status,
+        message: `Error al obtener nombres locales: ${response.status}`,
+      });
       return new Map();
     }
 
@@ -55,7 +92,16 @@ async function fetchLocalNamesMap(
 
     localNamesCache.set(cacheKey, localNames);
     return localNames;
-  } catch {
+  } catch (error) {
+    if (!(error instanceof Error && error.name === "AbortError")) {
+      reportNagerFailure({
+        source: "v3",
+        countryCode: code,
+        year,
+        message: error instanceof Error ? error.message : "NETWORK_ERROR",
+      });
+    }
+
     return new Map();
   }
 }
@@ -67,6 +113,16 @@ async function fetchYearHolidays(
   signal?: AbortSignal
 ): Promise<Holiday[]> {
   const code = countryCode.toUpperCase();
+  const languageCode = getDeviceLanguageCode();
+
+  // En inglés la UI usa `name` de v4; omitimos v3 para ahorrar una petición.
+  if (languageCode === "en") {
+    const v4Holidays = await fetchV4YearHolidays(code, year, signal);
+    return v4Holidays.map((holiday) => ({
+      ...holiday,
+      localName: null,
+    }));
+  }
 
   const [v4Holidays, localNames] = await Promise.all([
     fetchV4YearHolidays(code, year, signal),

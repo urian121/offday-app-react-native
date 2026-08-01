@@ -4,6 +4,7 @@ import cors from "cors";
 import { initDb } from "./db.js";
 import { generateMonthInsight } from "./monthInsight.js";
 import { parseMonthInsightBody } from "./validateMonthInsight.js";
+import { notifyNagerFailure } from "./notifyNagerFailure.js";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -11,7 +12,6 @@ const PORT = Number(process.env.PORT) || 3000;
 const KNOWN_ERROR_CODES = new Set([
   "REPLICATE_API_TOKEN_MISSING",
   "REPLICATE_EMPTY_RESPONSE",
-  "INVALID_REQUEST",
 ]);
 
 /**
@@ -63,6 +63,18 @@ app.post("/api/month-insight", async (req, res) => {
     const { status, code } = toClientError(error);
     res.status(status).json({ error: code });
   }
+});
+
+/** Recibe fallos de Nager.Date reportados por la app y dispara correo (con cooldown). */
+app.post("/api/alert/nager-failure", async (req, res) => {
+  const result = await notifyNagerFailure(req.body);
+
+  if (result === "invalid") {
+    return res.status(400).json({ error: "INVALID_REQUEST" });
+  }
+
+  // 202: aceptado (enviado o omitido por cooldown). No bloquea la UI de la app.
+  res.status(202).json({ ok: true, result });
 });
 
 await initDb();

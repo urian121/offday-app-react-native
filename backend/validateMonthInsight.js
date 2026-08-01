@@ -1,21 +1,8 @@
-/** Valida si un valor es string no vacío dentro de un límite de longitud. */
-function isNonEmptyString(value, maxLength) {
-  return (
-    typeof value === "string" &&
-    value.trim().length > 0 &&
-    value.length <= maxLength
-  );
-}
-
-/** Valida enteros dentro de un rango inclusivo. */
-function isIntegerInRange(value, min, max) {
-  return (
-    typeof value === "number" &&
-    Number.isInteger(value) &&
-    value >= min &&
-    value <= max
-  );
-}
+import {
+  isIntegerInRange,
+  isNonEmptyString,
+  parseCountryCode,
+} from "./validateCommon.js";
 
 /** Valida un festivo del mes seleccionado. */
 function isValidHoliday(holiday) {
@@ -61,10 +48,9 @@ export function parseMonthInsightBody(body) {
     return null;
   }
 
-  if (
-    !isNonEmptyString(stats.countryCode, 2) ||
-    !/^[A-Za-z]{2}$/.test(stats.countryCode.trim())
-  ) {
+  const countryCode = parseCountryCode(stats.countryCode);
+
+  if (!countryCode) {
     return null;
   }
 
@@ -120,7 +106,7 @@ export function parseMonthInsightBody(body) {
 
   return {
     stats: {
-      countryCode: stats.countryCode.trim().toUpperCase(),
+      countryCode,
       year: stats.year,
       selectedMonth: stats.selectedMonth,
       selectedMonthName: stats.selectedMonthName.trim(),

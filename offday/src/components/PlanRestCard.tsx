@@ -1,9 +1,9 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
-import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
+import type { HolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 
 type PlanRestCardProps = {
-  copy: ReturnType<typeof getHolidaysScreenCopy>;
+  copy: HolidaysScreenCopy;
 };
 
 /** Invita a organizar el descanso aprovechando los festivos del mes. */

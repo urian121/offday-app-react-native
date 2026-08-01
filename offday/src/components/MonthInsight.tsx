@@ -1,12 +1,12 @@
 import { ActivityIndicator, Text, View } from "react-native";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
-import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
+import type { HolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 
 type MonthInsightProps = {
   insight: string | null;
   loading: boolean;
   error: string | null;
-  copy: ReturnType<typeof getHolidaysScreenCopy>;
+  copy: HolidaysScreenCopy;
 };
 
 /** Presenta el estado de carga, contenido o aviso genérico del insight mensual. */

@@ -1,11 +1,11 @@
 import { Holiday, YearHolidayStats } from "../interface";
 import { formatMonthName } from "./dateFormat";
-import { filterHolidaysByMonth } from "./holidayDate";
+import { getHolidayMonth } from "./holidayDate";
 import { getHolidayDisplayName } from "./getHolidayDisplayName";
 
 /**
  * Resume el año para el insight: conteos por mes + festivos solo del mes activo.
- * Evita enviar los 12 listados completos al backend / IA.
+ * Un solo pase sobre la lista (evita filtrar el año 13 veces).
  */
 export function buildYearHolidayStats(
   holidays: Holiday[],
@@ -13,9 +13,18 @@ export function buildYearHolidayStats(
   year: number,
   selectedMonth: number
 ): YearHolidayStats {
-  const months = Array.from({ length: 12 }, (_, index) => {
+  const byMonth: Holiday[][] = Array.from({ length: 12 }, () => []);
+
+  for (const holiday of holidays) {
+    const month = getHolidayMonth(holiday.date);
+
+    if (month >= 1 && month <= 12) {
+      byMonth[month - 1].push(holiday);
+    }
+  }
+
+  const months = byMonth.map((monthHolidays, index) => {
     const month = index + 1;
-    const monthHolidays = filterHolidaysByMonth(holidays, month);
 
     return {
       month,
@@ -24,14 +33,12 @@ export function buildYearHolidayStats(
     };
   });
 
-  const selectedHolidays = filterHolidaysByMonth(holidays, selectedMonth).map(
-    (holiday) => ({
-      name: getHolidayDisplayName(holiday),
-      date: holiday.date,
-      national: holiday.nationalHoliday,
-      types: holiday.holidayTypes,
-    })
-  );
+  const selectedHolidays = byMonth[selectedMonth - 1].map((holiday) => ({
+    name: getHolidayDisplayName(holiday),
+    date: holiday.date,
+    national: holiday.nationalHoliday,
+    types: holiday.holidayTypes,
+  }));
 
   return {
     countryCode,

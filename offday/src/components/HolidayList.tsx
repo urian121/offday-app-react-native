@@ -1,3 +1,4 @@
+import { memo, useCallback, useMemo } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -8,7 +9,7 @@ import {
   getHolidayTypeLabel,
   isRegionalHoliday,
 } from "../utils/holidayMeta";
-import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
+import type { HolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 import { getHolidayDisplayName } from "../utils/getHolidayDisplayName";
 import { MonthInsight } from "./MonthInsight";
 import { PlanRestCard } from "./PlanRestCard";
@@ -18,7 +19,7 @@ type HolidayListProps = {
   loading: boolean;
   error: string | null;
   listKey: string;
-  copy: ReturnType<typeof getHolidaysScreenCopy>;
+  copy: HolidaysScreenCopy;
   insight: string | null;
   insightLoading: boolean;
   insightError: string | null;
@@ -55,12 +56,12 @@ function MetaChip({
 }
 
 /** Presenta fecha, nombre, alcance, tipos y subdivisiones de un festivo. */
-function HolidayCard({
+const HolidayCard = memo(function HolidayCard({
   holiday,
   copy,
 }: {
   holiday: Holiday;
-  copy: ReturnType<typeof getHolidaysScreenCopy>;
+  copy: HolidaysScreenCopy;
 }) {
   const regional = isRegionalHoliday(holiday);
   const subdivisions = regional
@@ -105,17 +106,17 @@ function HolidayCard({
       </View>
     </View>
   );
-}
+});
 
 /** Añade la animación escalonada de entrada a cada tarjeta. */
-function AnimatedHolidayItem({
+const AnimatedHolidayItem = memo(function AnimatedHolidayItem({
   holiday,
   index,
   copy,
 }: {
   holiday: Holiday;
   index: number;
-  copy: ReturnType<typeof getHolidaysScreenCopy>;
+  copy: HolidaysScreenCopy;
 }) {
   return (
     <Animated.View
@@ -129,7 +130,7 @@ function AnimatedHolidayItem({
       <HolidayCard holiday={holiday} copy={copy} />
     </Animated.View>
   );
-}
+});
 
 /** Construye una clave estable incluso para festivos regionales coincidentes. */
 function getHolidayKey(holiday: Holiday): string {
@@ -151,6 +152,31 @@ function HolidayListTitle({ title }: { title: string }) {
   );
 }
 
+/** Footer con plan de descanso + insight (aislado de las filas memoizadas). */
+const HolidayListFooter = memo(function HolidayListFooter({
+  copy,
+  insight,
+  insightLoading,
+  insightError,
+}: {
+  copy: HolidaysScreenCopy;
+  insight: string | null;
+  insightLoading: boolean;
+  insightError: string | null;
+}) {
+  return (
+    <View>
+      <PlanRestCard copy={copy} />
+      <MonthInsight
+        insight={insight}
+        loading={insightLoading}
+        error={insightError}
+        copy={copy}
+      />
+    </View>
+  );
+});
+
 /** Renderiza estados de carga/error y la lista mensual con su insight. */
 export function HolidayList({
   holidays,
@@ -164,6 +190,30 @@ export function HolidayList({
 }: HolidayListProps) {
   const insets = useSafeAreaInsets();
   const listBottomPadding = Math.max(insets.bottom, 16) + 28;
+
+  const renderItem = useCallback(
+    ({ item, index }: { item: Holiday; index: number }) => (
+      <AnimatedHolidayItem holiday={item} index={index} copy={copy} />
+    ),
+    [copy]
+  );
+
+  const listFooter = useMemo(
+    () => (
+      <HolidayListFooter
+        copy={copy}
+        insight={insight}
+        insightLoading={insightLoading}
+        insightError={insightError}
+      />
+    ),
+    [copy, insight, insightLoading, insightError]
+  );
+
+  const listHeader = useMemo(
+    () => <HolidayListTitle title={copy.holidaysTitle} />,
+    [copy.holidaysTitle]
+  );
 
   if (loading) {
     return (
@@ -187,21 +237,6 @@ export function HolidayList({
     );
   }
 
-  const insightContent = (
-    <MonthInsight
-      insight={insight}
-      loading={insightLoading}
-      error={insightError}
-      copy={copy}
-    />
-  );
-  const listFooter = (
-    <View>
-      <PlanRestCard copy={copy} />
-      {insightContent}
-    </View>
-  );
-
   if (holidays.length === 0) {
     return (
       <View style={{ paddingBottom: listBottomPadding }}>
@@ -211,7 +246,12 @@ export function HolidayList({
             {copy.noHolidays}
           </Text>
         </View>
-        {insightContent}
+        <MonthInsight
+          insight={insight}
+          loading={insightLoading}
+          error={insightError}
+          copy={copy}
+        />
       </View>
     );
   }
@@ -224,11 +264,9 @@ export function HolidayList({
       showsVerticalScrollIndicator={false}
       style={{ backgroundColor: "transparent" }}
       contentContainerStyle={{ paddingBottom: listBottomPadding }}
-      ListHeaderComponent={<HolidayListTitle title={copy.holidaysTitle} />}
+      ListHeaderComponent={listHeader}
       ListFooterComponent={listFooter}
-      renderItem={({ item, index }) => (
-        <AnimatedHolidayItem holiday={item} index={index} copy={copy} />
-      )}
+      renderItem={renderItem}
     />
   );
 }

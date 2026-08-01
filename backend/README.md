@@ -33,8 +33,23 @@ Solo necesitas `MAIL_USER` y `MAIL_PASS`. Si quieres recibir el aviso en **otra*
 ## Endpoints
 
 - `POST /api/month-insight` — genera o reutiliza el dato curioso del mes
+- `POST /api/alert/nager-failure` — la app reporta un fallo de Nager.Date; el backend envía correo (cooldown 6 h)
 
-Body compacto (conteos del año + festivos solo del mes activo):
+Body de alerta Nager:
+
+```json
+{
+  "source": "v4",
+  "countryCode": "CO",
+  "year": 2026,
+  "status": 503,
+  "message": "Error al obtener festivos: 503"
+}
+```
+
+`source` puede ser `v3`, `v4` o `countries`.
+
+Body compacto del insight (conteos del año + festivos solo del mes activo):
 
 ```json
 {

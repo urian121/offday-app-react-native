@@ -52,10 +52,16 @@ export function useMonthInsight({
         }
       })
       .catch((err) => {
-        if (!controller.signal.aborted) {
-          const code = err instanceof Error ? err.message : "UNKNOWN";
-          setError(code);
+        // Abort al cambiar mes/año no es un fallo de IA.
+        if (
+          controller.signal.aborted ||
+          (err instanceof Error && err.name === "AbortError")
+        ) {
+          return;
         }
+
+        const code = err instanceof Error ? err.message : "UNKNOWN";
+        setError(code);
       })
       .finally(() => {
         if (!controller.signal.aborted) {

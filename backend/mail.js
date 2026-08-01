@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 /** Crea el transporter de Gmail a partir de variables de entorno. */
-export function createMailTransporter() {
+function createMailTransporter() {
   const user = process.env.MAIL_USER?.trim();
   const pass = process.env.MAIL_PASS?.trim();
 

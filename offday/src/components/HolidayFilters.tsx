@@ -1,12 +1,12 @@
 import { Pressable, Text, View } from "react-native";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
 import { formatMonthName } from "../utils/dateFormat";
-import type { getHolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
+import type { HolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 
 type HolidayFiltersProps = {
   month: number;
   year: number;
-  copy: ReturnType<typeof getHolidaysScreenCopy>;
+  copy: HolidaysScreenCopy;
   onMonthPress: () => void;
   onYearPress: () => void;
 };

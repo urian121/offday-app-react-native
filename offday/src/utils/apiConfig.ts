@@ -1,4 +1,5 @@
 import Constants from "expo-constants";
+import { isAbsoluteHttpUrl } from "./resolveHttpUrl";
 
 type ExpoExtra = {
   apiUrl?: string;
@@ -8,10 +9,16 @@ type ExpoExtra = {
 export function getApiBaseUrl(): string {
   const extra = Constants.expoConfig?.extra as ExpoExtra | undefined;
 
-  const apiUrl =
-    process.env.EXPO_PUBLIC_API_URL?.trim() ||
-    extra?.apiUrl?.trim() ||
+  const candidate =
+    (typeof process.env.EXPO_PUBLIC_API_URL === "string"
+      ? process.env.EXPO_PUBLIC_API_URL.trim()
+      : "") ||
+    (typeof extra?.apiUrl === "string" ? extra.apiUrl.trim() : "") ||
     "";
 
-  return apiUrl.replace(/\/$/, "");
+  if (!candidate || !isAbsoluteHttpUrl(candidate)) {
+    return "";
+  }
+
+  return candidate.replace(/\/$/, "");
 }

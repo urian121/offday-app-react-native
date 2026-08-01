@@ -71,7 +71,7 @@ async function createInsightWithAI({ stats, locale, languageCode }) {
   );
 
   const systemPrompt = [
-    "You write one short curious insight (3-4 sentences, max 320 chars)",
+    "You write one short curious insight (2-3 sentences, max 280 chars)",
     "about the selected month of public holidays vs the rest of the year.",
     "Respect temporalRelation tense: past/present/future.",
     `Reply only with the insight text, written entirely in language code "${languageCode}".`,
