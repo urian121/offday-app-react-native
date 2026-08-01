@@ -10,6 +10,7 @@ const COPY = {
       yearPhrase: ` en todo ${year}`,
     }),
     holidaysTitle: "Días festivos este mes",
+    loadingHolidays: "Cargando festivos...",
     noHolidays: "No hay festivos este mes.",
     national: "Nacional",
     regional: "Regional",
@@ -26,9 +27,6 @@ const COPY = {
     restPlanSubtitle:
       "Transforma cada festivo en la excusa perfecta para desconectar, compartir en familia, conectar con la naturaleza, escaparte con amigos y recargar energías.",
     insightTitle: "Dato del mes",
-    insightLoading: "Generando dato curioso...",
-    insightUnavailable:
-      "No hay información o dato curioso disponible sobre este mes.",
     holidayTypeLabels: {
       Public: "Público",
       Bank: "Bancario",
@@ -47,6 +45,7 @@ const COPY = {
       yearPhrase: ` throughout ${year}`,
     }),
     holidaysTitle: "Public holidays",
+    loadingHolidays: "Loading holidays...",
     noHolidays: "No holidays this month.",
     national: "National",
     regional: "Regional",
@@ -62,9 +61,6 @@ const COPY = {
     restPlanTitle: "Plan your time off",
     restPlanSubtitle: "Turn holidays into moments to recharge.",
     insightTitle: "Month insight",
-    insightLoading: "Generating a curious fact...",
-    insightUnavailable:
-      "There is no information or curious fact available for this month.",
     holidayTypeLabels: {
       Public: "Public",
       Bank: "Bank",

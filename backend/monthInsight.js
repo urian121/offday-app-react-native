@@ -10,31 +10,39 @@ import {
   isAiBillingOrAuthFailure,
   notifyAiFailure,
 } from "./notifyAiFailure.js";
+import {
+  buildGenericMonthInsight,
+  getTemporalRelation,
+} from "./genericMonthInsight.js";
 
 /** Promesas en curso por país-año-mes-idioma (evita doble cobro a la IA). */
 const inflightInsights = new Map();
 
-/** Relación temporal del mes seleccionado respecto a hoy. */
-function getTemporalRelation(year, month) {
-  const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth() + 1;
+/** Tope por modelo (GPT y Gemini). Por defecto 5s cada uno. */
+const PRIMARY_TIMEOUT_MS = (() => {
+  const value = Number(process.env.REPLICATE_PRIMARY_TIMEOUT_MS || 5000);
+  return Number.isFinite(value) && value > 0 ? value : 5000;
+})();
 
-  if (year < currentYear || (year === currentYear && month < currentMonth)) {
-    return "past";
-  }
+const FALLBACK_TIMEOUT_MS = (() => {
+  const value = Number(process.env.REPLICATE_FALLBACK_TIMEOUT_MS || 5000);
+  return Number.isFinite(value) && value > 0 ? value : 5000;
+})();
 
-  if (year === currentYear && month === currentMonth) {
-    return "present";
-  }
-
-  return "future";
+/** True si el error viene de abort/timeout local. */
+function isAbortOrTimeout(error) {
+  return (
+    error?.name === "AbortError" ||
+    error?.message === "REPLICATE_TIMEOUT" ||
+    error?.timedOut === true
+  );
 }
 
 /** Ejecuta un modelo de Replicate y valida que haya texto. */
-async function runInsightModel(model, { prompt, systemPrompt }) {
+async function runInsightModel(model, { prompt, systemPrompt }, signal) {
   const output = await replicate.run(model, {
     input: buildModelInput(model, { prompt, systemPrompt }),
+    signal,
   });
 
   const insight = extractReplicateText(output);
@@ -49,7 +57,35 @@ async function runInsightModel(model, { prompt, systemPrompt }) {
   return insight;
 }
 
-/** Genera el texto del insight con Replicate (GPT → Gemini si falla). */
+/**
+ * Corre el modelo con tope de tiempo.
+ * Al vencer el timeout aborta la espera y lanza REPLICATE_TIMEOUT.
+ */
+async function runInsightModelWithTimeout(model, args, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await runInsightModel(model, args, controller.signal);
+  } catch (error) {
+    if (controller.signal.aborted || isAbortOrTimeout(error)) {
+      const timeoutError = new Error("REPLICATE_TIMEOUT");
+      timeoutError.status = 504;
+      timeoutError.timedOut = true;
+      timeoutError.model = model;
+      throw timeoutError;
+    }
+
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * Intenta GPT → Gemini (5s c/u). Si ambos fallan, dato genérico local.
+ * Nunca deja al usuario sin texto tras ~10s de IA.
+ */
 async function createInsightWithAI({ stats, locale, languageCode }) {
   const alertContext = {
     pais: stats.countryCode,
@@ -58,11 +94,14 @@ async function createInsightWithAI({ stats, locale, languageCode }) {
     language: languageCode,
   };
 
+  const genericInsight = () =>
+    buildGenericMonthInsight(stats, languageCode);
+
   if (!process.env.REPLICATE_API_TOKEN?.trim()) {
     const error = new Error("REPLICATE_API_TOKEN_MISSING");
     error.status = 503;
     await notifyAiFailure(error, alertContext);
-    throw error;
+    return genericInsight();
   }
 
   const temporalRelation = getTemporalRelation(
@@ -79,7 +118,6 @@ async function createInsightWithAI({ stats, locale, languageCode }) {
     "Never reply in a different language than requested.",
   ].join(" ");
 
-  // Payload mínimo: conteos anuales + detalle solo del mes activo.
   const prompt = JSON.stringify({
     countryCode: stats.countryCode,
     year: stats.year,
@@ -97,25 +135,33 @@ async function createInsightWithAI({ stats, locale, languageCode }) {
     responseLanguage: languageCode,
   });
 
+  const modelArgs = { prompt, systemPrompt };
   const primaryModel = REPLICATE_MODEL;
   const fallbackModel = REPLICATE_FALLBACK_MODEL;
   const canFallback =
     Boolean(fallbackModel) && fallbackModel !== primaryModel;
 
   try {
-    return await runInsightModel(primaryModel, { prompt, systemPrompt });
+    return await runInsightModelWithTimeout(
+      primaryModel,
+      modelArgs,
+      PRIMARY_TIMEOUT_MS
+    );
   } catch (primaryError) {
-    // Sin créditos/token: Gemini usaría la misma cuenta; no tiene sentido reintentar.
     if (isAiBillingOrAuthFailure(primaryError) || !canFallback) {
       await notifyAiFailure(primaryError, {
         ...alertContext,
         model: primaryModel,
       });
-      throw primaryError;
+      return genericInsight();
     }
 
     try {
-      return await runInsightModel(fallbackModel, { prompt, systemPrompt });
+      return await runInsightModelWithTimeout(
+        fallbackModel,
+        modelArgs,
+        FALLBACK_TIMEOUT_MS
+      );
     } catch (fallbackError) {
       await notifyAiFailure(fallbackError, {
         ...alertContext,
@@ -123,14 +169,14 @@ async function createInsightWithAI({ stats, locale, languageCode }) {
         primaryModel,
         primaryError: primaryError?.message,
       });
-      throw fallbackError;
+      return genericInsight();
     }
   }
 }
 
 /**
  * Busca el dato del mes en BD (país + año + mes + idioma).
- * Si existe lo retorna; si no, lo genera con IA y lo guarda.
+ * Si existe lo retorna; si no, lo genera (IA o genérico) y lo guarda.
  * Las peticiones concurrentes de la misma clave comparten una sola generación.
  */
 export async function generateMonthInsight({

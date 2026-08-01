@@ -21,8 +21,6 @@ type HolidayListProps = {
   listKey: string;
   copy: HolidaysScreenCopy;
   insight: string | null;
-  insightLoading: boolean;
-  insightError: string | null;
 };
 
 const STAGGER_MS = 75;
@@ -156,23 +154,14 @@ function HolidayListTitle({ title }: { title: string }) {
 const HolidayListFooter = memo(function HolidayListFooter({
   copy,
   insight,
-  insightLoading,
-  insightError,
 }: {
   copy: HolidaysScreenCopy;
   insight: string | null;
-  insightLoading: boolean;
-  insightError: string | null;
 }) {
   return (
     <View>
       <PlanRestCard copy={copy} />
-      <MonthInsight
-        insight={insight}
-        loading={insightLoading}
-        error={insightError}
-        copy={copy}
-      />
+      <MonthInsight insight={insight} copy={copy} />
     </View>
   );
 });
@@ -185,8 +174,6 @@ export function HolidayList({
   listKey,
   copy,
   insight,
-  insightLoading,
-  insightError,
 }: HolidayListProps) {
   const insets = useSafeAreaInsets();
   const listBottomPadding = Math.max(insets.bottom, 16) + 28;
@@ -199,15 +186,8 @@ export function HolidayList({
   );
 
   const listFooter = useMemo(
-    () => (
-      <HolidayListFooter
-        copy={copy}
-        insight={insight}
-        insightLoading={insightLoading}
-        insightError={insightError}
-      />
-    ),
-    [copy, insight, insightLoading, insightError]
+    () => <HolidayListFooter copy={copy} insight={insight} />,
+    [copy, insight]
   );
 
   const listHeader = useMemo(
@@ -221,6 +201,9 @@ export function HolidayList({
         <HolidayListTitle title={copy.holidaysTitle} />
         <View className="items-center py-16">
           <ActivityIndicator color="#633806" />
+          <Text className="mt-3 text-center text-base text-brand-brown">
+            {copy.loadingHolidays}
+          </Text>
         </View>
       </View>
     );
@@ -246,12 +229,7 @@ export function HolidayList({
             {copy.noHolidays}
           </Text>
         </View>
-        <MonthInsight
-          insight={insight}
-          loading={insightLoading}
-          error={insightError}
-          copy={copy}
-        />
+        <MonthInsight insight={insight} copy={copy} />
       </View>
     );
   }

@@ -1,38 +1,17 @@
-import { ActivityIndicator, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
 import type { HolidaysScreenCopy } from "../utils/getHolidaysScreenCopy";
 
 type MonthInsightProps = {
   insight: string | null;
-  loading: boolean;
-  error: string | null;
   copy: HolidaysScreenCopy;
 };
 
-/** Presenta el estado de carga, contenido o aviso genérico del insight mensual. */
-export function MonthInsight({
-  insight,
-  loading,
-  error,
-  copy,
-}: MonthInsightProps) {
-  if (loading) {
-    return (
-      <View className="mt-4 items-center rounded-[14px] bg-brand-gradient-start px-5 py-6">
-        <ActivityIndicator color="#633806" />
-        <Text className="mt-3 text-center text-base text-brand-brown">
-          {copy.insightLoading}
-        </Text>
-      </View>
-    );
-  }
-
-  if (!error && !insight) {
+/** Muestra el dato curioso solo cuando ya hay texto (sin loading ni vacío). */
+export function MonthInsight({ insight, copy }: MonthInsightProps) {
+  if (!insight) {
     return null;
   }
-
-  // Ante cualquier fallo de IA/API: mensaje genérico, sin detalles técnicos.
-  const message = error ? copy.insightUnavailable : insight;
 
   return (
     <View className="mt-4 rounded-[14px] bg-brand-gradient-start px-4 py-4">
@@ -49,12 +28,8 @@ export function MonthInsight({
           />
         </View>
       </View>
-      <Text
-        className={`mt-2 leading-6 ${
-          error ? "text-base text-brand-brown" : "text-[17px] text-brand-deep"
-        }`}
-      >
-        {message}
+      <Text className="mt-2 text-[17px] leading-6 text-brand-deep">
+        {insight}
       </Text>
     </View>
   );

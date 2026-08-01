@@ -12,6 +12,7 @@ const PORT = Number(process.env.PORT) || 3000;
 const KNOWN_ERROR_CODES = new Set([
   "REPLICATE_API_TOKEN_MISSING",
   "REPLICATE_EMPTY_RESPONSE",
+  "REPLICATE_TIMEOUT",
 ]);
 
 /**

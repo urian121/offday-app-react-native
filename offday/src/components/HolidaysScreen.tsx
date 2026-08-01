@@ -41,11 +41,7 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
     selectCountry,
   } = useHolidaysScreen();
 
-  const {
-    insight,
-    loading: insightLoading,
-    error: insightError,
-  } = useMonthInsight({
+  const { insight } = useMonthInsight({
     month,
     year,
     countryCode,
@@ -101,8 +97,6 @@ export function HolidaysScreen({ onReady }: HolidaysScreenProps) {
               listKey={`${countryCode}-${month}-${year}`}
               copy={copy}
               insight={insight}
-              insightLoading={insightLoading}
-              insightError={insightError}
             />
           </View>
         </View>
