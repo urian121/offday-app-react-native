@@ -95,3 +95,8 @@ OJO: siempre antes de crear el AAB de producción debes cambiar la versión en `
 ```bash
 npx eas build --platform android --profile production
 ```
+
+# Generar una APK localmente
+```bash
+npx eas build --platform android --profile preview --local
+```

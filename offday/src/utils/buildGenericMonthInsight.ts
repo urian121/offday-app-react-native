@@ -1,10 +1,10 @@
-/**
- * Dato curioso local (sin IA) a partir de los conteos del mes/año.
- * Se usa cuando GPT y Gemini fallan o superan el timeout.
- */
+import type { YearHolidayStats } from "../interface";
+import { getDeviceLanguageCode } from "./getDeviceLocale";
+
+type TemporalRelation = "past" | "present" | "future";
 
 /** Relación temporal del mes seleccionado respecto a hoy. */
-export function getTemporalRelation(year, month) {
+function getTemporalRelation(year: number, month: number): TemporalRelation {
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth() + 1;
@@ -20,8 +20,7 @@ export function getTemporalRelation(year, month) {
   return "future";
 }
 
-/** Plural simple es/en para “festivo(s)”. */
-function holidayWord(count, language) {
+function holidayWord(count: number, language: "es" | "en"): string {
   if (language === "es") {
     return count === 1 ? "festivo" : "festivos";
   }
@@ -29,15 +28,13 @@ function holidayWord(count, language) {
   return count === 1 ? "holiday" : "holidays";
 }
 
-/** Verbo ES según tiempo verbal. */
-function monthVerbEs(relation) {
+function monthVerbEs(relation: TemporalRelation): string {
   if (relation === "past") return "tuvo";
   if (relation === "present") return "tiene";
   return "tendrá";
 }
 
-/** Frase EN “there was/were/are/will be”. */
-function thereBeEn(relation, count) {
+function thereBeEn(relation: TemporalRelation, count: number): string {
   const plural = count !== 1;
 
   if (relation === "past") {
@@ -51,9 +48,11 @@ function thereBeEn(relation, count) {
   return "there will be";
 }
 
-/** Encuentra el mes con más festivos (distinto al seleccionado si es posible). */
-function findPeakMonth(months, selectedMonth) {
-  let peak = null;
+function findPeakMonth(
+  months: YearHolidayStats["months"],
+  selectedMonth: number
+) {
+  let peak = months[0] ?? null;
 
   for (const entry of months) {
     if (!peak || entry.count > peak.count) {
@@ -62,7 +61,7 @@ function findPeakMonth(months, selectedMonth) {
   }
 
   if (peak && peak.month === selectedMonth && months.length > 1) {
-    const other = months
+    const other = [...months]
       .filter((entry) => entry.month !== selectedMonth)
       .sort((a, b) => b.count - a.count)[0];
 
@@ -74,14 +73,38 @@ function findPeakMonth(months, selectedMonth) {
   return peak;
 }
 
+/** Nombres de festivos del mes para el texto genérico (máx. 2). */
+function holidayNamesBit(
+  names: string[],
+  monthCount: number,
+  language: "es" | "en"
+): string {
+  if (names.length === 0) {
+    return "";
+  }
+
+  if (monthCount === 1 || names.length === 1) {
+    return ` (${names[0]})`;
+  }
+
+  const shown = names.slice(0, 2).join(language === "es" ? " y " : " and ");
+
+  if (language === "es") {
+    return `, entre ellos ${shown}`;
+  }
+
+  return `, including ${shown}`;
+}
+
 /**
- * Arma un insight corto y determinista con los stats ya validados.
- * @returns {string}
+ * Dato del mes local (sin IA) a partir de los festivos ya cargados.
+ * Garantiza texto útil aunque falle o tarde el backend.
  */
-export function buildGenericMonthInsight(stats, languageCode = "en") {
-  const language = String(languageCode).toLowerCase().startsWith("es")
-    ? "es"
-    : "en";
+export function buildGenericMonthInsight(
+  stats: YearHolidayStats,
+  languageCode = getDeviceLanguageCode()
+): string {
+  const language = languageCode.toLowerCase().startsWith("es") ? "es" : "en";
   const relation = getTemporalRelation(stats.year, stats.selectedMonth);
   const monthCount =
     stats.months.find((entry) => entry.month === stats.selectedMonth)?.count ??
@@ -91,16 +114,11 @@ export function buildGenericMonthInsight(stats, languageCode = "en") {
   const year = stats.year;
   const word = holidayWord(monthCount, language);
   const peak = findPeakMonth(stats.months, stats.selectedMonth);
-  const firstHoliday = stats.selectedHolidays[0]?.name;
-  const secondHoliday = stats.selectedHolidays[1]?.name;
+  const names = stats.selectedHolidays.map((holiday) => holiday.name);
+  const holidayBit = holidayNamesBit(names, monthCount, language);
 
   if (language === "es") {
     const verb = monthVerbEs(relation);
-    const holidayBit = firstHoliday
-      ? monthCount === 1 || !secondHoliday
-        ? ` (${firstHoliday})`
-        : `, entre ellos ${firstHoliday} y ${secondHoliday}`
-      : "";
     const contrast =
       peak && peak.count > monthCount
         ? ` En cambio, ${peak.monthName} concentra ${peak.count} ${holidayWord(peak.count, "es")}.`
@@ -112,11 +130,6 @@ export function buildGenericMonthInsight(stats, languageCode = "en") {
   }
 
   const thereBe = thereBeEn(relation, monthCount);
-  const holidayBit = firstHoliday
-    ? monthCount === 1 || !secondHoliday
-      ? ` (${firstHoliday})`
-      : `, including ${firstHoliday} and ${secondHoliday}`
-    : "";
   const contrast =
     peak && peak.count > monthCount
       ? ` By contrast, ${peak.monthName} has ${peak.count} ${holidayWord(peak.count, "en")}.`

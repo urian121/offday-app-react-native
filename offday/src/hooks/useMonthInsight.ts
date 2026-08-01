@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Holiday } from "../interface";
 import { generateMonthInsight } from "../services/monthInsightService";
+import { buildGenericMonthInsight } from "../utils/buildGenericMonthInsight";
 import { buildYearHolidayStats } from "../utils/buildYearHolidayStats";
 
 type UseMonthInsightParams = {
@@ -12,7 +13,10 @@ type UseMonthInsightParams = {
   holidaysError: string | null;
 };
 
-/** Genera el insight únicamente cuando los festivos corresponden al filtro activo. */
+/**
+ * Muestra al instante un dato local con los festivos del mes.
+ * Si la IA responde a tiempo, lo reemplaza por el insight generado.
+ */
 export function useMonthInsight({
   month,
   year,
@@ -22,22 +26,14 @@ export function useMonthInsight({
   holidaysError,
 }: UseMonthInsightParams) {
   const [insight, setInsight] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!holidaysReady || holidaysError) {
       setInsight(null);
-      setError(null);
-      setLoading(false);
       return;
     }
 
     const controller = new AbortController();
-    setLoading(true);
-    setError(null);
-    setInsight(null);
-
     const stats = buildYearHolidayStats(
       yearHolidays,
       countryCode,
@@ -45,27 +41,22 @@ export function useMonthInsight({
       month
     );
 
+    // Siempre hay contenido: con 0 o N festivos el genérico usa los stats locales.
+    setInsight(buildGenericMonthInsight(stats));
+
     generateMonthInsight(stats, controller.signal)
       .then((text) => {
-        if (!controller.signal.aborted) {
-          setInsight(text);
+        if (!controller.signal.aborted && text.trim()) {
+          setInsight(text.trim());
         }
       })
       .catch((err) => {
-        // Abort al cambiar mes/año no es un fallo de IA.
+        // Abort o fallo de IA: nos quedamos con el dato local ya visible.
         if (
           controller.signal.aborted ||
           (err instanceof Error && err.name === "AbortError")
         ) {
           return;
-        }
-
-        const code = err instanceof Error ? err.message : "UNKNOWN";
-        setError(code);
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) {
-          setLoading(false);
         }
       });
 
@@ -79,5 +70,5 @@ export function useMonthInsight({
     holidaysError,
   ]);
 
-  return { insight, loading, error };
+  return { insight };
 }

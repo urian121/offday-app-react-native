@@ -17,8 +17,8 @@ module.exports = {
     android: {
       package: "com.developerurian.offday",
       adaptiveIcon: {
-        backgroundImage: "./assets/android-icon-background.png",
-        foregroundImage: "./assets/android-icon-foreground.png",
+        backgroundColor: "#E9C980",
+        foregroundImage: "./assets/icon.png",
       },
       predictiveBackGestureEnabled: false,
     },
