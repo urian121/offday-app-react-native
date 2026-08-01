@@ -91,12 +91,10 @@ Si generaste `android/` con prebuild y quieres borrarla:
 rm -rf android
 ```
 
-OJO: siempre antes de crear el AAB de producción debes cambiar la versión en `app.config.js`.
-```bash
-npx eas build --platform android --profile production
-```
+### Versionado (Play Store)
 
-# Generar una APK localmente
-```bash
-npx eas build --platform android --profile preview --local
-```
+No hace falta cambiar el `versionCode` de Android a mano en `app.config.js`.
+
+En `eas.json` el perfil `production` usa `autoIncrement: true` y el CLI tiene `appVersionSource: "remote"`: EAS lleva el contador en remoto y lo incrementa solo en cada build de producción.
+
+La cadena `version` de `app.config.js` (p. ej. `1.1.0`) es la versión visible para el usuario. Solo súbela si quieres que Play Store muestre un número nuevo; no es obligatoria para que el AAB se acepte.
