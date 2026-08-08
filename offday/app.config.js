@@ -10,10 +10,7 @@ module.exports = {
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
-    ios: {
-      supportsTablet: true,
-      bundleIdentifier: "com.developerurian.offday",
-    },
+    platforms: ["android"],
     android: {
       package: "com.developerurian.offday",
       adaptiveIcon: {
@@ -30,10 +27,6 @@ module.exports = {
     androidNavigationBar: {
       backgroundColor: "#fff5ea",
       barStyle: "dark-content",
-    },
-    web: {
-      favicon: "./assets/favicon.png",
-      bundler: "metro",
     },
     plugins: [
       "expo-localization",

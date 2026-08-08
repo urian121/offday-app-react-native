@@ -1,2 +1,0 @@
-# Lo común (node_modules, .env, logs) lo cubre el .gitignore de la raíz.
-# Aquí solo reglas específicas del backend si hacen falta en el futuro.

@@ -1,7 +1,7 @@
 # AGENT.md — Guía de Diseño y Desarrollo
 
 ## Contexto del proyecto
-App móvil (Expo + React Native + TypeScript) que muestra **días festivos** filtrados por mes, año y país. No es un calendario visual tradicional — es una lista/experiencia enfocada en festivos.
+App **Android** (Expo + React Native + TypeScript) que muestra **días festivos** filtrados por mes, año y país. No es un calendario visual tradicional — es una lista/experiencia enfocada en festivos. **Solo Android**: no hay target iOS ni web.
 
 ## API de festivos — Nager.Date
 
@@ -80,9 +80,10 @@ La fecha, alcance y tipos siempre provienen de v4. Los datos v3 nunca sustituyen
 - Funciones puras y helpers reutilizables, agrupadas por dominio (ej. `dateFormat.ts`, `getDeviceLocale.ts`).
 
 ## Stack
-- Expo + React Native + TypeScript
+- Expo + React Native + TypeScript (**Android only**)
 - **NativeWind** para estilos (Tailwind en RN)
 - Sin `expo-router` con tabs — navegación simple si aplica
+- No configurar `ios` / `web` en `app.config.js` ni scripts `ios` / `web`
 
 ---
 

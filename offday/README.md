@@ -1,6 +1,6 @@
 # FestiDías
 
-Aplicación móvil Expo + React Native que muestra días festivos por país, mes y año.
+Aplicación **Android** (Expo + React Native) que muestra días festivos por país, mes y año. No incluye targets iOS ni web.
 
 ## Desarrollo
 

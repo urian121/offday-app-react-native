@@ -1,7 +1,7 @@
 {
   "name": "offday",
   "version": "1.0.0",
-  "description": "A React Native mobile application built with Expo for managing days off, schedules, and productivity.",
+  "description": "Android app built with Expo that shows public holidays by country, month, and year.",
   "author": {
     "name": "Urian Viera",
     "email": "urianwebdeveloper@gmail.com",
@@ -10,11 +10,11 @@
   "keywords": [
     "react-native",
     "expo",
-    "mobile",
+    "android",
     "typescript",
-    "productivity",
     "offday",
-    "Dias festivos"
+    "festidias",
+    "dias-festivos"
   ],
   "homepage": "https://github.com/urian121/offday-app-react-native",
   "repository": {
@@ -26,20 +26,20 @@
     "@gorhom/bottom-sheet": "^5.2.14",
     "@react-native-vector-icons/ionicons": "^13.1.2",
     "country-flag-icons": "^1.6.20",
-    "expo": "~57.0.7",
-    "expo-build-properties": "~57.0.6",
-    "expo-constants": "~57.0.6",
+    "expo": "~57.0.11",
+    "expo-build-properties": "~57.0.9",
+    "expo-constants": "~57.0.9",
     "expo-localization": "~57.0.1",
     "expo-splash-screen": "~57.0.4",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.1",
     "nativewind": "^4.2.6",
     "react": "19.2.3",
-    "react-native": "0.86.0",
+    "react-native": "0.86.2",
     "react-native-gesture-handler": "~2.32.0",
-    "react-native-reanimated": "4.5.0",
+    "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
-    "react-native-worklets": "0.10.0"
+    "react-native-worklets": "0.10.1"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
@@ -50,9 +50,8 @@
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web",
+    "android": "expo start --android",
+    "run:android": "expo run:android",
     "typecheck": "tsc --noEmit"
   },
   "private": true
